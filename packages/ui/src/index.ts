@@ -1,6 +1,7 @@
 export * from "./components/Button";
 export * from "./components/Card";
 export * from "./components/CountryMap/CountryMap";
+export * from "./components/FlagIcon";
 export * from "./components/ChoiceCard";
 export * from "./components/ChoiceGroup";
 export * from "./components/Coin";

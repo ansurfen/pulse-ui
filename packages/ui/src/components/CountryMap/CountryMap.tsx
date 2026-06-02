@@ -19,6 +19,8 @@ import type { CountryMapProps } from "./types";
 import { useRegionStyles } from "./useRegionStyles";
 
 export type { CountryId, CountryMapProps, RegionData } from "./types";
+export { countryCatalog, getCountryCatalogItem } from "./maps/catalog";
+export type { CountryCatalogItem, CountryPreset } from "./maps/catalog";
 
 const DRAG_THRESHOLD = 4;
 const DEFAULT_REGION_DEPTH_OFFSET = 2.8;

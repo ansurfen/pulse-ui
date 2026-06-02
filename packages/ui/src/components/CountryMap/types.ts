@@ -22,7 +22,24 @@ export type RegionStyle = {
   active: boolean;
 };
 
-export type CountryId = "japan";
+export type CountryId =
+  | "japan"
+  | "china"
+  | "south-korea"
+  | "taiwan"
+  | "france"
+  | "germany"
+  | "spain"
+  | "italy"
+  | "portugal"
+  | "united-kingdom"
+  | "usa"
+  | "canada"
+  | "mexico"
+  | "brazil"
+  | "australia"
+  | "india"
+  | "russia";
 
 export type CountryMapProps = {
   country: CountryId;

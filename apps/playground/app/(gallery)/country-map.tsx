@@ -1,19 +1,34 @@
 import { useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { CountryMap } from "@pulse-ui/ui";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { CountryMap, countryCatalog, getCountryCatalogItem, type CountryId, type CountryPreset } from "@pulse-ui/ui";
 import { colors, radius, spacing, typography } from "@pulse-ui/core";
 import { ScreenTemplate } from "../../src/components/ScreenTemplate";
 
-const presets = [
-  { label: "京都", regions: ["kyoto"] },
-  { label: "关西", regions: ["kyoto", "osaka", "nara", "hyogo"] },
-  { label: "关东", regions: ["tokyo", "kanagawa", "saitama", "chiba"] },
-  { label: "清空", regions: [] as string[] }
-] as const;
+const defaultCountry: CountryId = "japan";
+
+function getPresets(country: CountryId): CountryPreset[] {
+  const item = getCountryCatalogItem(country);
+  if (!item) {
+    return [{ label: "清空", regions: [] }];
+  }
+
+  if (item.presets?.length) {
+    return [...item.presets, { label: "清空", regions: [] }];
+  }
+
+  return [
+    ...item.sampleRegions.map((id) => ({ label: id, regions: [id] })),
+    { label: "全部", regions: [...item.sampleRegions] },
+    { label: "清空", regions: [] }
+  ];
+}
 
 export default function CountryMapScreen() {
-  const [activeRegions, setActiveRegions] = useState<string[]>(["kyoto", "osaka", "tokyo"]);
+  const [country, setCountry] = useState<CountryId>(defaultCountry);
+  const [activeRegions, setActiveRegions] = useState<string[]>(() => [...getCountryCatalogItem(defaultCountry)!.sampleRegions]);
   const [lastPressed, setLastPressed] = useState("");
+
+  const presets = useMemo(() => getPresets(country), [country]);
 
   const regions = useMemo(
     () =>
@@ -27,10 +42,35 @@ export default function CountryMapScreen() {
   return (
     <ScreenTemplate
       title="Country Map"
-      description="SVG prefecture map with data-driven highlighting. Tap a region on the map or use the presets below."
+      description="SVG region map with data-driven highlighting. Switch countries below, then tap regions or use presets."
     >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.countryRow}>
+        {countryCatalog.map((item) => {
+          const selected = country === item.id;
+
+          return (
+            <Pressable
+              key={item.id}
+              onPress={() => {
+                setCountry(item.id);
+                setActiveRegions([...item.sampleRegions]);
+                setLastPressed("");
+              }}
+              style={({ pressed }) => [
+                styles.countryChip,
+                selected && styles.countryChipSelected,
+                pressed && styles.chipPressed
+              ]}
+            >
+              <Text style={[styles.countryChipText, selected && styles.countryChipTextSelected]}>{item.label}</Text>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+
       <CountryMap
-        country="japan"
+        key={country}
+        country={country}
         height={360}
         regions={regions}
         onRegionPress={(id, name) => {
@@ -59,6 +99,34 @@ export default function CountryMapScreen() {
 }
 
 const styles = StyleSheet.create({
+  countryRow: {
+    flexDirection: "row",
+    gap: spacing.sm,
+    paddingBottom: spacing.lg
+  },
+  countryChip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: colors.border
+  },
+  countryChipSelected: {
+    backgroundColor: colors.text,
+    borderColor: colors.text
+  },
+  countryChipText: {
+    color: colors.text,
+    fontSize: typography.body,
+    fontWeight: "600"
+  },
+  countryChipTextSelected: {
+    color: colors.surface
+  },
+  chipPressed: {
+    opacity: 0.85
+  },
   hint: {
     marginTop: spacing.md,
     color: colors.textMuted,
