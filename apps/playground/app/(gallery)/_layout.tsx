@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } fr
 import { colors, spacing, typography } from "@pulse-ui/core";
 
 const items = [
+  { label: "Country Map", href: "/country-map" },
   { label: "Buttons", href: "/button" },
   { label: "Choices", href: "/choice-card" },
   { label: "Icons", href: "/icons" },

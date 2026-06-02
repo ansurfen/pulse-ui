@@ -5,4 +5,5 @@ dist
 build
 coverage
 *.log
+scripts/_japan-constants.ts
 

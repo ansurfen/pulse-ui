@@ -9,11 +9,12 @@
     "moti": "*",
     "react": "*",
     "react-native": "*",
-    "react-native-reanimated": "*"
+    "react-native-reanimated": "*",
+    "react-native-svg": "*"
   },
   "dependencies": {
     "@pulse-ui/core": "workspace:*",
-    "@pulse-ui/motion": "workspace:*"
+    "@pulse-ui/motion": "workspace:*",
+    "react-native-svg": "^15.15.5"
   }
 }
-
