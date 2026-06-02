@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "PulseUI Playground",
+    "slug": "pulse-ui-playground",
+    "scheme": "pulseui-playground",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": ["expo-router"],
+    "assetBundlePatterns": ["**/*"],
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
+

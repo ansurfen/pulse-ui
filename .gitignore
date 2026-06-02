@@ -1,0 +1,8 @@
+node_modules
+.expo
+.turbo
+dist
+build
+coverage
+*.log
+
