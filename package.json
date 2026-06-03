@@ -12,6 +12,10 @@
     "android": "pnpm --filter @pulse-ui/playground android",
     "ios": "pnpm --filter @pulse-ui/playground ios",
     "web": "pnpm --filter @pulse-ui/playground web",
+    "voyika": "pnpm --filter @voyika/app dev",
+    "voyika:web": "pnpm --filter @voyika/app web",
+    "voyika:ios": "pnpm --filter @voyika/app ios",
+    "voyika:android": "pnpm --filter @voyika/app android",
     "bundle": "node ./scripts/pack.mjs",
     "typecheck": "pnpm -r typecheck"
   }

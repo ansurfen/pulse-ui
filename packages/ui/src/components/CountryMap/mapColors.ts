@@ -27,9 +27,22 @@ export function getRegionDepthFill(fill: string, amount = 0.22) {
   return mixColor(fill, "#000000", amount);
 }
 
+/** Country map design palette */
+export const countryMapPalette = {
+  duoGreen: "#58CC02",
+  skyBlue: "#89CFF7",
+  land: "#F2F3F5",
+  border: "#D1D5DB",
+  text: "#3C3F44",
+  selected: "#1CB0F6",
+  disabled: "#C8CDD4",
+  containerBorder: "#78CBF6",
+  zoomButtonFill: "#F2F3F5"
+} as const;
+
 export const defaultMapPalette = {
-  ocean: "#49C0F0",
-  land: "#E6EEC8",
-  landBorder: "#B8C9A0",
-  active: "#58CC02"
+  ocean: countryMapPalette.skyBlue,
+  land: countryMapPalette.land,
+  landBorder: countryMapPalette.border,
+  active: countryMapPalette.duoGreen
 } as const;

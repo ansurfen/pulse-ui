@@ -74,6 +74,15 @@ export default function ButtonScreen() {
             </View>
           }
         />
+        <Button label="已完成" backgroundColor="#58CC02" textColor="#FFFFFF" disabled />
+        <Button
+          label="当前不可用"
+          tone="flat"
+          backgroundColor="#FFFFFF"
+          textColor="#A3A3A3"
+          borderColor="#DDDDDD"
+          disabled
+        />
         <Button label="保存中..." backgroundColor="#FFB648" loading textColor="#FFFFFF" />
       </View>
     </ScreenTemplate>

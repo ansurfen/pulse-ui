@@ -3,10 +3,20 @@ import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } fr
 import { colors, spacing, typography } from "@pulse-ui/core";
 
 const items = [
+  { label: "Accordion", href: "/accordion" },
+  { label: "Calendar", href: "/calendar" },
+  { label: "Bubble", href: "/bubble" },
+  { label: "Cards", href: "/card" },
   { label: "Country Map", href: "/country-map" },
+  { label: "Dialog", href: "/dialog" },
   { label: "Buttons", href: "/button" },
   { label: "Choices", href: "/choice-card" },
   { label: "Icons", href: "/icons" },
+  { label: "Tabs", href: "/tab" },
+  { label: "Text Fields", href: "/text-field" },
+  { label: "Toggles", href: "/toggle" },
+  { label: "Tags", href: "/tag" },
+  { label: "Section Headings", href: "/section-heading" },
   { label: "Match Tokens", href: "/match-token" },
   { label: "Word Builder", href: "/word-builder" },
   { label: "XP Bars", href: "/xp-bar" }
@@ -27,7 +37,7 @@ export default function GalleryLayout() {
           {items.map((item) => {
             const active = pathname === item.href || (pathname === "/" && item.href === "/button");
             return (
-              <Pressable key={item.href} onPress={() => router.replace(item.href)} style={[styles.navItem, active && styles.navItemActive]}>
+              <Pressable key={item.href} onPress={() => router.replace(item.href as never)} style={[styles.navItem, active && styles.navItemActive]}>
                 <Text style={[styles.navText, active && styles.navTextActive]}>{item.label}</Text>
               </Pressable>
             );

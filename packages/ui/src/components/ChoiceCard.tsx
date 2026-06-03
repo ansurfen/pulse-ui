@@ -11,10 +11,23 @@ export interface ChoiceCardProps extends PropsWithChildren {
   style?: ViewStyle;
 }
 
+function isChoiceSelected(group: ReturnType<typeof useChoiceGroup>, value: string): boolean {
+  if (!group) {
+    return false;
+  }
+
+  if (group.mode === "multiple") {
+    return (group.value ?? []).includes(value);
+  }
+
+  return group.value === value;
+}
+
 export function ChoiceCard({ value, selected, disabled, onPress, style, children }: ChoiceCardProps) {
   const group = useChoiceGroup();
   const isDisabled = disabled ?? group?.disabled ?? false;
-  const isSelected = selected ?? (group?.value !== undefined ? group.value === value : false);
+  const isSelected = selected ?? (group ? isChoiceSelected(group, value) : false);
+  const isMultiple = group?.mode === "multiple";
 
   function handlePress() {
     if (isDisabled) {
@@ -22,12 +35,24 @@ export function ChoiceCard({ value, selected, disabled, onPress, style, children
     }
 
     onPress?.(value);
-    group?.onValueChange?.(value);
+
+    if (!group) {
+      return;
+    }
+
+    if (group.mode === "multiple") {
+      const current = group.value ?? [];
+      const next = isSelected ? current.filter((entry) => entry !== value) : [...current, value];
+      group.onValueChange?.(next);
+      return;
+    }
+
+    group.onValueChange?.(value);
   }
 
   return (
     <Pressable
-      accessibilityRole="radio"
+      accessibilityRole={isMultiple ? "checkbox" : "radio"}
       accessibilityState={{ checked: isSelected, disabled: isDisabled }}
       disabled={isDisabled}
       onPress={handlePress}

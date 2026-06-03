@@ -11,6 +11,11 @@ export type MapViewport = {
   offsetY: number;
 };
 
+export type ViewportCenter = {
+  x: number;
+  y: number;
+};
+
 export function parseViewBox(viewBox: string): ViewBoxBounds {
   const [x, y, width, height] = viewBox.split(/\s+/).map(Number);
 
@@ -42,6 +47,34 @@ export function createDefaultViewport(minZoom: number): MapViewport {
     offsetX: 0,
     offsetY: 0
   };
+}
+
+export function createViewportForCenter(
+  bounds: ViewBoxBounds,
+  zoom: number,
+  center?: ViewportCenter
+): MapViewport {
+  if (!center) {
+    return clampViewport(
+      {
+        zoom,
+        offsetX: 0,
+        offsetY: 0
+      },
+      bounds
+    );
+  }
+
+  const { width: visibleWidth, height: visibleHeight } = getVisibleSize(bounds, zoom);
+
+  return clampViewport(
+    {
+      zoom,
+      offsetX: center.x - bounds.x - visibleWidth / 2,
+      offsetY: center.y - bounds.y - visibleHeight / 2
+    },
+    bounds
+  );
 }
 
 export function isDefaultViewport(viewport: MapViewport, minZoom: number) {

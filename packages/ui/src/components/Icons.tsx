@@ -73,3 +73,33 @@ export const LightningIcon = createIconComponent({
   source: require("../../assets/lightning.png"),
   aspectRatio: 263 / 367
 });
+
+export const GalleryIcon = createIconComponent({
+  source: require("../../assets/gallery.png"),
+  aspectRatio: 428 / 389
+});
+
+export const LockerIcon = createIconComponent({
+  source: require("../../assets/locker.png"),
+  aspectRatio: 641 / 858
+});
+
+export const LuggageIcon = createIconComponent({
+  source: require("../../assets/luggage.png"),
+  aspectRatio: 550 / 502
+});
+
+export const StoreIcon = createIconComponent({
+  source: require("../../assets/store.png"),
+  aspectRatio: 420 / 401
+});
+
+export const BookIcon = createIconComponent({
+  source: require("../../assets/book.png"),
+  aspectRatio: 256 / 230
+});
+
+export const StarIcon = createIconComponent({
+  source: require("../../assets/star.png"),
+  aspectRatio: 779 / 744
+});

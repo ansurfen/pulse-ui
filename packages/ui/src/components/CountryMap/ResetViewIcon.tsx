@@ -1,17 +1,22 @@
 import Svg, { Circle } from "react-native-svg";
 import { colors } from "@pulse-ui/core";
 
-export function ResetViewIcon({ disabled = false }: { disabled?: boolean }) {
-  const color = disabled ? colors.textMuted : colors.secondary;
+type ResetViewIconProps = {
+  disabled?: boolean;
+  size?: number;
+};
+
+export function ResetViewIcon({ disabled = false, size = 20 }: ResetViewIconProps) {
+  const color = disabled ? colors.textMuted : "#6A8394";
 
   return (
-    <Svg width={18} height={18} viewBox="0 0 18 18" accessibilityRole="image">
-      <Circle cx={9} cy={9} r={6.25} stroke={color} strokeWidth={1.5} fill="none" />
-      <Circle cx={9} cy={9} r={1.75} fill={color} />
-      <Circle cx={9} cy={3.25} r={1} fill={color} />
-      <Circle cx={9} cy={14.75} r={1} fill={color} />
-      <Circle cx={3.25} cy={9} r={1} fill={color} />
-      <Circle cx={14.75} cy={9} r={1} fill={color} />
+    <Svg width={size} height={size} viewBox="0 0 22 22" accessibilityRole="image">
+      <Circle cx={11} cy={11} r={7.25} stroke={color} strokeWidth={1.8} fill="none" />
+      <Circle cx={11} cy={11} r={2.1} fill={color} />
+      <Circle cx={11} cy={4.15} r={1.1} fill={color} />
+      <Circle cx={11} cy={17.85} r={1.1} fill={color} />
+      <Circle cx={4.15} cy={11} r={1.1} fill={color} />
+      <Circle cx={17.85} cy={11} r={1.1} fill={color} />
     </Svg>
   );
 }

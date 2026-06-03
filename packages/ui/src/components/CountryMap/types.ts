@@ -45,6 +45,13 @@ export type CountryMapProps = {
   country: CountryId;
   width?: number | string;
   height?: number | string;
+  initialZoom?: number;
+  initialCenter?: {
+    x: number;
+    y: number;
+  };
+  initialFocusRegionId?: string;
+  initialFocusRegionIds?: readonly string[];
   activeRegions?: readonly string[];
   regions?: readonly RegionData[];
   baseColor?: string;

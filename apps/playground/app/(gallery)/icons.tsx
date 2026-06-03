@@ -1,5 +1,19 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { CoinIcon, countryCatalog, FireIcon, FlagIcon, GemIcon, HeartIcon, LightningIcon } from "@pulse-ui/ui";
+import {
+  BookIcon,
+  CoinIcon,
+  countryCatalog,
+  FireIcon,
+  FlagIcon,
+  GalleryIcon,
+  GemIcon,
+  HeartIcon,
+  LightningIcon,
+  LockerIcon,
+  LuggageIcon,
+  StarIcon,
+  StoreIcon
+} from "@pulse-ui/ui";
 import { colors, radius, spacing, typography } from "@pulse-ui/core";
 import { ScreenTemplate } from "../../src/components/ScreenTemplate";
 
@@ -8,7 +22,13 @@ const gameIcons = [
   { label: "FireIcon", Component: FireIcon },
   { label: "GemIcon", Component: GemIcon },
   { label: "HeartIcon", Component: HeartIcon },
-  { label: "LightningIcon", Component: LightningIcon }
+  { label: "LightningIcon", Component: LightningIcon },
+  { label: "GalleryIcon", Component: GalleryIcon },
+  { label: "LockerIcon", Component: LockerIcon },
+  { label: "LuggageIcon", Component: LuggageIcon },
+  { label: "StoreIcon", Component: StoreIcon },
+  { label: "BookIcon", Component: BookIcon },
+  { label: "StarIcon", Component: StarIcon }
 ] as const;
 
 export default function IconsScreen() {

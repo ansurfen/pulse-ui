@@ -10,39 +10,63 @@ const options = [
   { value: "sugar", label: "sugar", index: 3, icon: "🧃" }
 ] as const;
 
+function ChoiceGrid({ selectedValues }: { selectedValues: readonly string[] }) {
+  return (
+    <View style={styles.grid}>
+      {options.map((option) => {
+        const selected = selectedValues.includes(option.value);
+
+        return (
+          <ChoiceCard key={option.value} value={option.value} style={styles.choice}>
+            <View style={styles.choiceBody}>
+              <View style={styles.iconWrap}>
+                <Text style={styles.icon}>{option.icon}</Text>
+              </View>
+              <View style={styles.footer}>
+                <Text style={[styles.label, selected && styles.labelSelected]}>{option.label}</Text>
+                <View style={[styles.indexBadge, selected && styles.indexBadgeSelected]}>
+                  <Text style={[styles.indexText, selected && styles.indexTextSelected]}>{option.index}</Text>
+                </View>
+              </View>
+            </View>
+          </ChoiceCard>
+        );
+      })}
+    </View>
+  );
+}
+
 export default function ChoiceCardScreen() {
   const [value, setValue] = useState("coffee");
+  const [values, setValues] = useState<string[]>(["tea", "coffee"]);
 
   return (
-    <ScreenTemplate title="Choice Cards" description="Selectable answer cards with radio-style behavior. The card owns selection state and feedback, while the inner content stays fully custom.">
+    <ScreenTemplate
+      title="Choice Cards"
+      description="Selectable answer cards for single or multiple selection. ChoiceCard owns visual feedback; ChoiceGroup owns selection mode and state."
+    >
+      <Text style={styles.sectionTitle}>Single (radio)</Text>
       <ChoiceGroup value={value} onValueChange={setValue}>
-        <View style={styles.grid}>
-          {options.map((option) => {
-            const selected = value === option.value;
+        <ChoiceGrid selectedValues={[value]} />
+      </ChoiceGroup>
 
-            return (
-              <ChoiceCard key={option.value} value={option.value} style={styles.choice}>
-                <View style={styles.choiceBody}>
-                  <View style={styles.iconWrap}>
-                    <Text style={styles.icon}>{option.icon}</Text>
-                  </View>
-                  <View style={styles.footer}>
-                    <Text style={[styles.label, selected && styles.labelSelected]}>{option.label}</Text>
-                    <View style={[styles.indexBadge, selected && styles.indexBadgeSelected]}>
-                      <Text style={[styles.indexText, selected && styles.indexTextSelected]}>{option.index}</Text>
-                    </View>
-                  </View>
-                </View>
-              </ChoiceCard>
-            );
-          })}
-        </View>
+      <Text style={styles.sectionTitle}>Multiple (checkbox)</Text>
+      <ChoiceGroup multiple value={values} onValueChange={setValues}>
+        <ChoiceGrid selectedValues={values} />
       </ChoiceGroup>
     </ScreenTemplate>
   );
 }
 
 const styles = StyleSheet.create({
+  sectionTitle: {
+    color: colors.textMuted,
+    fontSize: typography.body,
+    fontWeight: "700",
+    marginBottom: spacing.md,
+    marginTop: spacing.xl,
+    textTransform: "uppercase"
+  },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",

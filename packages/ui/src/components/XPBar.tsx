@@ -190,8 +190,7 @@ const styles = StyleSheet.create({
   },
   markerWrap: {
     position: "absolute",
-    top: "50%",
-    marginTop: -21,
+    top: 0,
     alignItems: "center",
     justifyContent: "center"
   },
