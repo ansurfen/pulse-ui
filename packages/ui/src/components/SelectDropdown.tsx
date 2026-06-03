@@ -1,6 +1,8 @@
 import { ReactNode, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View, ViewStyle } from "react-native";
 import { BubblePopover, type BubblePopoverPlacement } from "./BubblePopover";
+import { Drawer, type DrawerPlacement } from "./Drawer";
+import { Overlay } from "./Overlay";
 import { colors, radius, spacing, typography } from "@pulse-ui/core";
 
 export interface SelectDropdownOption<TValue extends string = string> {
@@ -10,6 +12,9 @@ export interface SelectDropdownOption<TValue extends string = string> {
   description?: string;
 }
 
+export type SelectDropdownVariant = "default" | "inline";
+export type SelectDropdownMenuPresentation = "popover" | "modal" | "drawer" | "drawer-top" | "drawer-bottom";
+
 export interface SelectDropdownProps<TValue extends string = string> {
   value?: TValue;
   options: SelectDropdownOption<TValue>[];
@@ -17,6 +22,8 @@ export interface SelectDropdownProps<TValue extends string = string> {
   placeholder?: string;
   title?: string;
   placement?: BubblePopoverPlacement;
+  variant?: SelectDropdownVariant;
+  menuPresentation?: SelectDropdownMenuPresentation;
   style?: ViewStyle;
   renderValue?: (option?: SelectDropdownOption<TValue>) => ReactNode;
   visible?: boolean;
@@ -30,6 +37,8 @@ export function SelectDropdown<TValue extends string = string>({
   placeholder = "请选择",
   title,
   placement = "bottom",
+  variant = "default",
+  menuPresentation = "popover",
   style,
   renderValue,
   visible,
@@ -48,22 +57,101 @@ export function SelectDropdown<TValue extends string = string>({
     [options, value]
   );
 
+  const trigger = (
+    <Pressable onPress={() => setOpen(!open)} style={[styles.trigger, variant === "inline" && styles.triggerInline, style]}>
+      <Text
+        style={[
+          styles.triggerLabel,
+          variant === "inline" && styles.triggerLabelInline,
+          !selectedOption && styles.triggerPlaceholder
+        ]}
+      >
+        {selectedOption ? selectedOption.label : placeholder}
+      </Text>
+      <Text style={[styles.triggerChevron, variant === "inline" && styles.triggerChevronInline]}>
+        {open ? "▴" : "▾"}
+      </Text>
+    </Pressable>
+  );
+
+  const menu = (
+    <SelectDropdownMenu
+      title={title}
+      options={options}
+      value={value}
+      renderValue={renderValue}
+      onSelect={(next) => {
+        onValueChange?.(next);
+        setOpen(false);
+      }}
+    />
+  );
+
+  if (menuPresentation === "modal") {
+    return (
+      <>
+        {trigger}
+        <Overlay visible={open} onRequestClose={() => setOpen(false)} cardStyle={styles.sheetCard}>
+          {menu}
+        </Overlay>
+      </>
+    );
+  }
+
+  if (
+    menuPresentation === "drawer" ||
+    menuPresentation === "drawer-top" ||
+    menuPresentation === "drawer-bottom"
+  ) {
+    const drawerPlacement: DrawerPlacement =
+      menuPresentation === "drawer-top" ? "top" : "bottom";
+
+    return (
+      <>
+        {trigger}
+        <Drawer
+          visible={open}
+          placement={drawerPlacement}
+          onRequestClose={() => setOpen(false)}
+          contentStyle={styles.drawerContent}
+        >
+          {menu}
+        </Drawer>
+      </>
+    );
+  }
+
   return (
     <BubblePopover
       placement={placement}
       visible={open}
       onVisibleChange={setOpen}
-      trigger={
-        <View style={[styles.trigger, style]}>
-          <Text style={[styles.triggerLabel, !selectedOption && styles.triggerPlaceholder]}>
-            {selectedOption ? selectedOption.label : placeholder}
-          </Text>
-          <Text style={styles.triggerChevron}>{open ? "▴" : "▾"}</Text>
-        </View>
-      }
+      trigger={trigger}
       bubbleStyle={styles.menuBubble}
       contentStyle={styles.menuContent}
     >
+      {menu}
+    </BubblePopover>
+  );
+}
+
+interface SelectDropdownMenuProps<TValue extends string = string> {
+  title?: string;
+  options: SelectDropdownOption<TValue>[];
+  value?: TValue;
+  renderValue?: (option?: SelectDropdownOption<TValue>) => ReactNode;
+  onSelect: (value: TValue) => void;
+}
+
+function SelectDropdownMenu<TValue extends string = string>({
+  title,
+  options,
+  value,
+  renderValue,
+  onSelect
+}: SelectDropdownMenuProps<TValue>) {
+  return (
+    <>
       {title ? (
         <View style={styles.menuHeader}>
           <Text style={styles.menuHeaderText}>{title}</Text>
@@ -75,10 +163,7 @@ export function SelectDropdown<TValue extends string = string>({
           return (
             <Pressable
               key={option.value}
-              onPress={() => {
-                onValueChange?.(option.value);
-                setOpen(false);
-              }}
+              onPress={() => onSelect(option.value)}
               style={[
                 styles.optionRow,
                 active && styles.optionRowActive,
@@ -102,7 +187,7 @@ export function SelectDropdown<TValue extends string = string>({
           );
         })}
       </ScrollView>
-    </BubblePopover>
+    </>
   );
 }
 
@@ -119,10 +204,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between"
   },
+  triggerInline: {
+    minWidth: 0,
+    minHeight: 0,
+    borderWidth: 0,
+    backgroundColor: "transparent",
+    paddingHorizontal: 0,
+    gap: spacing.xs
+  },
   triggerLabel: {
     color: colors.text,
     fontSize: typography.bodyLg,
     fontWeight: "700"
+  },
+  triggerLabelInline: {
+    color: "#1CB0F6"
   },
   triggerPlaceholder: {
     color: colors.textMuted
@@ -130,6 +226,17 @@ const styles = StyleSheet.create({
   triggerChevron: {
     color: colors.textMuted,
     fontSize: typography.bodyLg
+  },
+  triggerChevronInline: {
+    color: "#1CB0F6",
+    fontWeight: "700"
+  },
+  sheetCard: {
+    padding: 0,
+    overflow: "hidden"
+  },
+  drawerContent: {
+    padding: 0
   },
   menuBubble: {
     minWidth: 240

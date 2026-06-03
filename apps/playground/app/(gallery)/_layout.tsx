@@ -9,6 +9,7 @@ const items = [
   { label: "Cards", href: "/card" },
   { label: "Country Map", href: "/country-map" },
   { label: "Dialog", href: "/dialog" },
+  { label: "Drawer", href: "/drawer" },
   { label: "Buttons", href: "/button" },
   { label: "Choices", href: "/choice-card" },
   { label: "Icons", href: "/icons" },
@@ -17,6 +18,7 @@ const items = [
   { label: "Toggles", href: "/toggle" },
   { label: "Tags", href: "/tag" },
   { label: "Section Headings", href: "/section-heading" },
+  { label: "Settings", href: "/settings" },
   { label: "Match Tokens", href: "/match-token" },
   { label: "Word Builder", href: "/word-builder" },
   { label: "XP Bars", href: "/xp-bar" }
