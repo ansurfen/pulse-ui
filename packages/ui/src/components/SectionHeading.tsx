@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
-import { colors, spacing, typography } from "@pulse-ui/core";
+import { spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
 
 export type SectionHeadingVariant = "centered" | "title";
 
@@ -17,15 +17,16 @@ export interface SectionHeadingProps {
 export function SectionHeading({
   children,
   variant = "centered",
-  color = "#4B4B4B",
+  color,
   fontSize = typography.body,
   fontWeight = "700",
-  lineColor = "#E5E5E5",
+  lineColor,
   style,
   textStyle
 }: SectionHeadingProps) {
+  const colors = usePulseLegacyColors();
   const labelStyle: TextStyle = {
-    color,
+    color: color ?? colors.text,
     fontSize,
     fontWeight,
     ...textStyle
@@ -35,16 +36,16 @@ export function SectionHeading({
     return (
       <View style={[styles.titleRoot, style]}>
         <Text style={[styles.titleLabel, labelStyle]}>{children}</Text>
-        <View style={[styles.titleLine, { backgroundColor: lineColor }]} />
+        <View style={[styles.titleLine, { backgroundColor: lineColor ?? colors.border }]} />
       </View>
     );
   }
 
   return (
     <View style={[styles.centeredRoot, style]}>
-      <View style={[styles.centeredLine, { backgroundColor: lineColor }]} />
+      <View style={[styles.centeredLine, { backgroundColor: lineColor ?? colors.border }]} />
       <Text style={[styles.centeredLabel, labelStyle]}>{children}</Text>
-      <View style={[styles.centeredLine, { backgroundColor: lineColor }]} />
+      <View style={[styles.centeredLine, { backgroundColor: lineColor ?? colors.border }]} />
     </View>
   );
 }
@@ -67,9 +68,7 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: spacing.sm
   },
-  titleLabel: {
-    color: colors.text
-  },
+  titleLabel: {},
   titleLine: {
     width: "100%",
     height: 1

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors, usePulseTheme } from "@pulse-ui/core";
 
 export type CalendarStripMode = "week" | "month";
 export type CalendarHighlightVariant = "fill" | "check";
@@ -51,11 +51,14 @@ export function CalendarStrip({
   showSelection = false,
   style
 }: CalendarStripProps) {
+  const pulseTheme = usePulseTheme();
+  const colors = usePulseLegacyColors();
+  const isDark = pulseTheme.mode === "dark";
   const accentColor = theme?.accentColor ?? "#FF9600";
   const accentTextColor = theme?.accentTextColor ?? "#FFFFFF";
-  const textColor = theme?.textColor ?? "#A0A5AE";
-  const mutedTextColor = theme?.mutedTextColor ?? "#D7D9DE";
-  const dayBackgroundColor = theme?.dayBackgroundColor ?? "#E6E6E8";
+  const textColor = theme?.textColor ?? (isDark ? colors.textMuted : "#A0A5AE");
+  const mutedTextColor = theme?.mutedTextColor ?? (isDark ? "#556272" : "#D7D9DE");
+  const dayBackgroundColor = theme?.dayBackgroundColor ?? (isDark ? colors.surfaceAlt : "#E6E6E8");
 
   const entries = useMemo(
     () => (mode === "week" ? buildWeekEntries(visibleDate) : buildMonthEntries(visibleDate)),

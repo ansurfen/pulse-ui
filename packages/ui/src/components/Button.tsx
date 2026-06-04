@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseTheme } from "@pulse-ui/core";
 
 export type ButtonVariant = "primary" | "secondary" | "danger";
 export type ButtonTone = "elevated" | "flat";
@@ -25,12 +25,6 @@ export interface ButtonProps {
   suffix?: ReactNode;
   contentAlign?: ButtonContentAlign;
 }
-
-const variantMap: Record<ButtonVariant, { backgroundColor: string; textColor: string }> = {
-  primary: { backgroundColor: "#2BA6E6", textColor: colors.surface },
-  secondary: { backgroundColor: "#1D2B53", textColor: colors.surface },
-  danger: { backgroundColor: "#FF5D73", textColor: colors.surface }
-};
 
 function hexToRgb(input: string) {
   const hex = input.replace("#", "");
@@ -65,7 +59,9 @@ function getButtonColors({
   hoverBackgroundColor,
   hoverTextColor,
   hoverBorderColor,
-  hovered
+  hovered,
+  defaultHoverBackgroundColor,
+  defaultHoverBorderColor
 }: {
   tone: ButtonTone;
   backgroundColor: string;
@@ -75,12 +71,14 @@ function getButtonColors({
   hoverTextColor?: string;
   hoverBorderColor?: string;
   hovered: boolean;
+  defaultHoverBackgroundColor: string;
+  defaultHoverBorderColor: string;
 }) {
   if (tone === "flat") {
     return {
-      backgroundColor: hovered ? hoverBackgroundColor ?? "#E5E5E5" : backgroundColor,
+      backgroundColor: hovered ? hoverBackgroundColor ?? defaultHoverBackgroundColor : backgroundColor,
       textColor: hovered ? hoverTextColor ?? textColor : textColor,
-      borderColor: hovered ? hoverBorderColor ?? "#C8C8C8" : borderColor
+      borderColor: hovered ? hoverBorderColor ?? defaultHoverBorderColor : borderColor
     };
   }
 
@@ -109,11 +107,20 @@ export function Button({
   suffix,
   contentAlign = "center"
 }: ButtonProps) {
+  const theme = usePulseTheme();
+  const { colors } = theme;
   const isDisabled = disabled || loading;
+  const variantMap: Record<ButtonVariant, { backgroundColor: string; textColor: string }> = {
+    primary: { backgroundColor: colors.brand.secondary, textColor: colors.text.inverse },
+    secondary: { backgroundColor: colors.brand.secondaryDeep, textColor: colors.text.inverse },
+    danger: { backgroundColor: colors.feedback.danger, textColor: colors.text.inverse }
+  };
   const palette = variantMap[variant];
-  const defaultBackgroundColor = tone === "flat" ? backgroundColor ?? colors.surface : backgroundColor ?? palette.backgroundColor;
-  const defaultTextColor = tone === "flat" ? textColor ?? "#1CB0F6" : textColor ?? palette.textColor;
-  const defaultBorderColor = tone === "flat" ? borderColor ?? "#D9D9D9" : borderColor ?? mixColor(defaultBackgroundColor, "#000000", 0.16);
+  const defaultBackgroundColor = tone === "flat" ? backgroundColor ?? colors.background.surface : backgroundColor ?? palette.backgroundColor;
+  const defaultTextColor = tone === "flat" ? textColor ?? colors.text.primary : textColor ?? palette.textColor;
+  const defaultBorderColor = tone === "flat" ? borderColor ?? colors.border.default : borderColor ?? mixColor(defaultBackgroundColor, "#000000", 0.16);
+  const defaultHoverBackgroundColor = theme.mode === "dark" ? colors.background.subtle : "#F3F3F3";
+  const defaultHoverBorderColor = theme.mode === "dark" ? colors.border.strong : "#CDCDCD";
 
   return (
     <Pressable disabled={isDisabled} onPress={onPress} style={({ pressed }) => [styles.shell, tone === "flat" && styles.flatShell, style, pressed && styles.pressedShell, isDisabled && styles.disabled]}>
@@ -126,7 +133,9 @@ export function Button({
           hoverBackgroundColor,
           hoverTextColor,
           hoverBorderColor,
-          hovered
+          hovered,
+          defaultHoverBackgroundColor,
+          defaultHoverBorderColor
         });
         const topColor = mixColor(resolved.backgroundColor, "#FFFFFF", 0.1);
         const bottomColor = mixColor(resolved.backgroundColor, "#000000", tone === "flat" ? 0.08 : 0.22);

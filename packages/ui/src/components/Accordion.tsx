@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode, useState } from "react";
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseTheme } from "@pulse-ui/core";
 
 export interface AccordionItemProps extends PropsWithChildren {
   title: ReactNode;
@@ -17,7 +17,23 @@ export interface AccordionProps extends PropsWithChildren {
 }
 
 export function Accordion({ children, style }: AccordionProps) {
-  return <View style={[styles.group, style]}>{children}</View>;
+  const theme = usePulseTheme();
+  const { colors } = theme;
+
+  return (
+    <View
+      style={[
+        styles.group,
+        {
+          borderColor: colors.border.default,
+          backgroundColor: colors.background.surface
+        },
+        style
+      ]}
+    >
+      {children}
+    </View>
+  );
 }
 
 export function AccordionItem({
@@ -30,6 +46,8 @@ export function AccordionItem({
   contentStyle,
   children
 }: AccordionItemProps) {
+  const theme = usePulseTheme();
+  const { colors } = theme;
   const [internalExpanded, setInternalExpanded] = useState(defaultExpanded);
   const isControlled = typeof expanded === "boolean";
   const isExpanded = isControlled ? expanded : internalExpanded;
@@ -42,23 +60,24 @@ export function AccordionItem({
   };
 
   return (
-    <View style={[styles.item, style]}>
+    <View style={[styles.item, { borderBottomColor: colors.border.default }, style]}>
       <Pressable
         disabled={disabled}
         onPress={() => setExpanded(!isExpanded)}
         style={({ pressed }) => [
           styles.header,
+          { backgroundColor: colors.background.surface },
           pressed && !disabled && styles.headerPressed,
           disabled && styles.disabled
         ]}
       >
         <View style={styles.titleWrap}>
-          {typeof title === "string" ? <Text style={styles.title}>{title}</Text> : title}
+          {typeof title === "string" ? <Text style={[styles.title, { color: colors.text.primary }]}>{title}</Text> : title}
         </View>
-        <Text style={[styles.chevron, isExpanded && styles.chevronExpanded]}>⌃</Text>
+        <Text style={[styles.chevron, { color: colors.text.muted }, isExpanded && styles.chevronExpanded]}>⌃</Text>
       </Pressable>
 
-      {isExpanded ? <View style={[styles.content, contentStyle]}>{children}</View> : null}
+      {isExpanded ? <View style={[styles.content, { backgroundColor: colors.background.surface }, contentStyle]}>{children}</View> : null}
     </View>
   );
 }
@@ -68,14 +87,11 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: radius.lg,
     borderWidth: 2,
-    borderColor: "#E1E1E1",
-    backgroundColor: colors.surface,
     overflow: "hidden"
   },
   item: {
     width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E5E5"
+    borderBottomWidth: 1
   },
   header: {
     minHeight: 74,
@@ -83,8 +99,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: colors.surface
+    justifyContent: "space-between"
   },
   headerPressed: {
     opacity: 0.9
@@ -97,13 +112,11 @@ const styles = StyleSheet.create({
     paddingRight: spacing.lg
   },
   title: {
-    color: "#3E3E3E",
     fontSize: 18,
     fontWeight: "800",
     lineHeight: 24
   },
   chevron: {
-    color: "#7E7E7E",
     fontSize: 26,
     lineHeight: 26,
     transform: [{ rotate: "180deg" }]
@@ -115,7 +128,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.xs,
     paddingBottom: spacing.xl,
-    gap: spacing.lg,
-    backgroundColor: colors.surface
+    gap: spacing.lg
   }
 });

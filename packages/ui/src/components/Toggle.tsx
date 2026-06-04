@@ -7,7 +7,7 @@ import Animated, {
   useSharedValue,
   withTiming
 } from "react-native-reanimated";
-import { colors, radius } from "@pulse-ui/core";
+import { radius, usePulseLegacyColors } from "@pulse-ui/core";
 
 export interface ToggleProps {
   value?: boolean;
@@ -36,9 +36,10 @@ export function Toggle({
   inactiveColor = "#E2E2E2",
   thumbColor = "#FFFFFF",
   activeThumbBorderColor = "#27A9F3",
-  inactiveThumbBorderColor = "#E0E0E0",
+  inactiveThumbBorderColor,
   style
 }: ToggleProps) {
+  const colors = usePulseLegacyColors();
   const [internalValue, setInternalValue] = useState(defaultValue);
   const isControlled = typeof value === "boolean";
   const checked = isControlled ? value : internalValue;
@@ -72,7 +73,7 @@ export function Toggle({
     borderColor: interpolateColor(
       progress.value,
       [0, 1],
-      [inactiveThumbBorderColor, activeThumbBorderColor]
+      [inactiveThumbBorderColor ?? colors.border, activeThumbBorderColor]
     )
   }));
 

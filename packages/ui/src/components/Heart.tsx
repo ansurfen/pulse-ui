@@ -1,6 +1,6 @@
 import { MotiView } from "moti";
 import { Pressable, StyleSheet, Text } from "react-native";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
 
 export interface HeartProps {
   active?: boolean;
@@ -9,6 +9,7 @@ export interface HeartProps {
 }
 
 export function Heart({ active = true, label = "Life", onToggle }: HeartProps) {
+  const colors = usePulseLegacyColors();
   return (
     <Pressable onPress={() => onToggle?.(!active)} style={styles.pressable}>
       <MotiView
@@ -17,11 +18,11 @@ export function Heart({ active = true, label = "Life", onToggle }: HeartProps) {
           opacity: active ? 1 : 0.6
         }}
         transition={{ type: "timing", duration: 220 }}
-        style={[styles.heart, active ? styles.active : styles.inactive]}
+        style={[styles.heart, active ? styles.active : [styles.inactive, { backgroundColor: colors.surfaceAlt }]]}
       >
-        <Text style={styles.icon}>{active ? "♥" : "♡"}</Text>
+        <Text style={[styles.icon, { color: colors.heart }]}>{active ? "♥" : "♡"}</Text>
       </MotiView>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -42,16 +43,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFE2E7"
   },
   inactive: {
-    backgroundColor: colors.surfaceAlt
+    
   },
   icon: {
-    fontSize: 38,
-    color: colors.heart
+    fontSize: 38
   },
   label: {
-    color: colors.text,
     fontSize: typography.body,
     fontWeight: "600"
   }
 });
-

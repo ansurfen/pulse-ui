@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, CalendarStrip, Dialog } from "@pulse-ui/ui";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseTheme } from "@pulse-ui/core";
 import { ScreenTemplate } from "../../src/components/ScreenTemplate";
 
 export default function CalendarScreen() {
+  const theme = usePulseTheme();
+  const { colors } = theme;
   const [mode, setMode] = useState<"week" | "month">("week");
   const [visibleDate, setVisibleDate] = useState(new Date(2026, 5, 3));
   const [selectedDate, setSelectedDate] = useState(new Date(2026, 5, 3));
@@ -46,8 +48,8 @@ export default function CalendarScreen() {
           />
         </View>
 
-        <View style={styles.previewBlock}>
-          <Text style={styles.sectionTitle}>Orange Theme</Text>
+        <View style={[styles.previewBlock, { backgroundColor: colors.background.surfaceAlt }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>{theme.mode === "dark" ? "Orange Theme / Dark" : "Orange Theme"}</Text>
           <CalendarStrip
             mode={mode}
             visibleDate={visibleDate}
@@ -68,8 +70,8 @@ export default function CalendarScreen() {
           />
         </View>
 
-        <View style={styles.previewBlock}>
-          <Text style={styles.sectionTitle}>Blue Theme</Text>
+        <View style={[styles.previewBlock, { backgroundColor: colors.background.surfaceAlt }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text.primary }]}>{theme.mode === "dark" ? "Blue Theme / Dark" : "Blue Theme"}</Text>
           <CalendarStrip
             mode="week"
             visibleDate={visibleDate}
@@ -85,8 +87,8 @@ export default function CalendarScreen() {
           />
         </View>
 
-        <View style={styles.infoCard}>
-          <Text style={styles.infoText}>
+        <View style={[styles.infoCard, { backgroundColor: colors.background.subtle }]}>
+          <Text style={[styles.infoText, { color: colors.text.muted }]}>
             当前选中：
             {`${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`}
           </Text>
@@ -115,22 +117,18 @@ const styles = StyleSheet.create({
   previewBlock: {
     gap: spacing.md,
     padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: "#F8FAFD"
+    borderRadius: radius.lg
   },
   sectionTitle: {
-    color: colors.text,
     fontSize: typography.bodyLg,
     fontWeight: "800"
   },
   infoCard: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
-    borderRadius: radius.md,
-    backgroundColor: "#F5F7FA"
+    borderRadius: radius.md
   },
   infoText: {
-    color: colors.textMuted,
     fontSize: typography.body,
     fontWeight: "600"
   }

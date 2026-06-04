@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Card } from "@pulse-ui/ui";
-import { colors, spacing, typography } from "@pulse-ui/core";
+import { spacing, typography, usePulseTheme } from "@pulse-ui/core";
 
 export interface ScreenTemplateProps extends PropsWithChildren {
   title: string;
@@ -9,10 +9,13 @@ export interface ScreenTemplateProps extends PropsWithChildren {
 }
 
 export function ScreenTemplate({ title, description, children }: ScreenTemplateProps) {
+  const theme = usePulseTheme();
+  const { colors } = theme;
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background.page }]} contentContainerStyle={styles.content}>
+      <Text style={[styles.title, { color: colors.text.primary }]}>{title}</Text>
+      <Text style={[styles.description, { color: colors.text.muted }]}>{description}</Text>
       <Card style={styles.previewCard}>
         <View style={styles.preview}>{children}</View>
       </Card>
@@ -29,12 +32,10 @@ const styles = StyleSheet.create({
     gap: spacing.lg
   },
   title: {
-    color: colors.text,
     fontSize: typography.hero,
     fontWeight: "800"
   },
   description: {
-    color: colors.textMuted,
     fontSize: typography.bodyLg,
     maxWidth: 760
   },
@@ -47,4 +48,3 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   }
 });
-

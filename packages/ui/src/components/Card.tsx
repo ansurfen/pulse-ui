@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode } from "react";
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
-import { colors, radius, shadows, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseTheme } from "@pulse-ui/core";
 
 export type CardTone = "flat" | "elevated";
 
@@ -45,25 +45,30 @@ function CardFrame({
   tone,
   backgroundColor,
   borderColor,
+  mode,
+  shadowStyle,
   style,
   children
 }: {
   tone: CardTone;
   backgroundColor: string;
   borderColor: string;
+  mode: "light" | "dark";
+  shadowStyle?: ViewStyle;
   style?: ViewStyle;
   children: ReactNode;
 }) {
   if (tone === "flat") {
     return (
-      <View style={[styles.card, shadows.md, { backgroundColor, borderColor }, style]}>
+      <View style={[styles.card, shadowStyle, { backgroundColor, borderColor }, style]}>
         {children}
       </View>
     );
   }
 
-  const depthBackground = mixColor("#E5E5E5", "#000000", 0.08);
-  const depthBorder = mixColor("#E5E5E5", "#000000", 0.16);
+  const depthBase = mode === "dark" ? mixColor(backgroundColor, "#000000", 0.22) : "#E5E5E5";
+  const depthBackground = mixColor(depthBase, "#000000", mode === "dark" ? 0.08 : 0.08);
+  const depthBorder = mixColor(depthBase, "#000000", mode === "dark" ? 0.2 : 0.16);
 
   return (
     <View style={[styles.elevatedShell, style]}>
@@ -85,9 +90,11 @@ export function Card({
   backgroundColor,
   borderColor
 }: CardProps) {
-  const resolvedBackground = backgroundColor ?? colors.surface;
+  const theme = usePulseTheme();
+  const { colors, shadows } = theme;
+  const resolvedBackground = backgroundColor ?? colors.background.surface;
   const resolvedBorder =
-    borderColor ?? (tone === "elevated" ? mixColor(resolvedBackground, "#000000", 0.12) : "#E1E1E1");
+    borderColor ?? (tone === "elevated" ? mixColor(resolvedBackground, "#000000", 0.12) : colors.border.default);
   const hasHeader = Boolean(title || header);
   const hasFooter = Boolean(footer);
 
@@ -95,16 +102,18 @@ export function Card({
     <CardFrame
       backgroundColor={resolvedBackground}
       borderColor={resolvedBorder}
+      mode={theme.mode}
+      shadowStyle={theme.shadows.md as ViewStyle}
       style={style}
       tone={tone}
     >
       {hasHeader ? (
         <View style={[styles.header, { backgroundColor: resolvedBackground }]}>
-          {header ?? <Text style={styles.title}>{title}</Text>}
+          {header ?? <Text style={[styles.title, { color: colors.text.primary }]}>{title}</Text>}
         </View>
       ) : null}
 
-      {hasHeader && children ? <View style={styles.divider} /> : null}
+      {hasHeader && children ? <View style={[styles.divider, { backgroundColor: colors.border.default }]} /> : null}
 
       <View
         style={[
@@ -117,7 +126,7 @@ export function Card({
         {children}
       </View>
 
-      {hasFooter ? <View style={styles.divider} /> : null}
+      {hasFooter ? <View style={[styles.divider, { backgroundColor: colors.border.default }]} /> : null}
       {hasFooter ? <View style={[styles.footer, { backgroundColor: resolvedBackground }]}>{footer}</View> : null}
     </CardFrame>
   );
@@ -156,7 +165,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg
   },
   title: {
-    color: "#4B4B4B",
     fontSize: typography.title,
     fontWeight: "800"
   },

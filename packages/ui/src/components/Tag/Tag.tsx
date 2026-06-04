@@ -1,6 +1,6 @@
 import { ReactNode, useMemo } from "react";
 import { StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
 
 export type TagVariant = "neutral" | "primary" | "success" | "warning" | "danger" | "info";
 export type TagSize = "sm" | "md";
@@ -21,40 +21,39 @@ export interface TagProps {
   textStyle?: TextStyle;
 }
 
-const variantThemes: Record<TagVariant, Required<TagTheme>> = {
-  neutral: {
-    backgroundColor: "#F2F2F2",
-    textColor: "#8E8E8E",
-    borderColor: "transparent"
-  },
-  primary: {
-    backgroundColor: "#EAF7FF",
-    textColor: "#1CB0F6",
-    borderColor: "transparent"
-  },
-  success: {
-    backgroundColor: "#E8F8E0",
-    textColor: "#58A700",
-    borderColor: "transparent"
-  },
-  warning: {
-    backgroundColor: "#FFF4E8",
-    textColor: "#FF9600",
-    borderColor: "transparent"
-  },
-  danger: {
-    backgroundColor: "#FFE8EC",
-    textColor: colors.danger,
-    borderColor: "transparent"
-  },
-  info: {
-    backgroundColor: colors.surfaceAlt,
-    textColor: colors.primary,
-    borderColor: "transparent"
-  }
-};
-
-function resolveTheme(variant: TagVariant, theme?: TagTheme): Required<TagTheme> {
+function resolveTheme(variant: TagVariant, colors: ReturnType<typeof usePulseLegacyColors>, theme?: TagTheme): Required<TagTheme> {
+  const variantThemes: Record<TagVariant, Required<TagTheme>> = {
+    neutral: {
+      backgroundColor: "#F2F2F2",
+      textColor: "#8E8E8E",
+      borderColor: "transparent"
+    },
+    primary: {
+      backgroundColor: "#EAF7FF",
+      textColor: "#1CB0F6",
+      borderColor: "transparent"
+    },
+    success: {
+      backgroundColor: "#E8F8E0",
+      textColor: "#58A700",
+      borderColor: "transparent"
+    },
+    warning: {
+      backgroundColor: "#FFF4E8",
+      textColor: "#FF9600",
+      borderColor: "transparent"
+    },
+    danger: {
+      backgroundColor: "#FFE8EC",
+      textColor: colors.danger,
+      borderColor: "transparent"
+    },
+    info: {
+      backgroundColor: colors.surfaceAlt,
+      textColor: colors.primary,
+      borderColor: "transparent"
+    }
+  };
   const preset = variantThemes[variant];
 
   return {
@@ -73,7 +72,8 @@ export function Tag({
   style,
   textStyle
 }: TagProps) {
-  const resolvedTheme = useMemo(() => resolveTheme(variant, theme), [theme, variant]);
+  const colors = usePulseLegacyColors();
+  const resolvedTheme = useMemo(() => resolveTheme(variant, colors, theme), [colors, theme, variant]);
   const content = children ?? label;
 
   return (

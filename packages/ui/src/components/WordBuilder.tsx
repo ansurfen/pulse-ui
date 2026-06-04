@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
 
 export interface WordBuilderItem {
   id: string;
@@ -24,6 +24,7 @@ export function WordBuilder({
   onOptionItemPress,
   style
 }: WordBuilderProps) {
+  const colors = usePulseLegacyColors();
   const resolvedAnswerRows = answerRows && answerRows.length > 0 ? answerRows : [selectedIds ?? []];
   const resolvedSelectedIds = resolvedAnswerRows.flat();
 
@@ -45,6 +46,7 @@ export function WordBuilder({
                     key={item.id}
                     label={item.label}
                     disabled={item.disabled}
+                    colors={colors}
                     onPress={onSelectedItemPress ? () => onSelectedItemPress(item) : undefined}
                   />
                 );
@@ -65,6 +67,7 @@ export function WordBuilder({
               key={item.id}
               label={item.label}
               disabled={item.disabled}
+              colors={colors}
               onPress={onOptionItemPress ? () => onOptionItemPress(item) : undefined}
             />
           )
@@ -77,10 +80,11 @@ export function WordBuilder({
 interface WordTokenProps {
   label: string;
   disabled?: boolean;
+  colors: ReturnType<typeof usePulseLegacyColors>;
   onPress?: () => void;
 }
 
-function WordToken({ label, disabled, onPress }: WordTokenProps) {
+function WordToken({ label, disabled, colors, onPress }: WordTokenProps) {
   const isInteractive = Boolean(onPress) && !disabled;
 
   return (
@@ -89,12 +93,13 @@ function WordToken({ label, disabled, onPress }: WordTokenProps) {
       onPress={onPress}
       style={({ pressed, hovered }) => [
         styles.token,
+        { borderColor: colors.border, backgroundColor: colors.surface },
         disabled && styles.tokenDisabled,
-        isInteractive && hovered && styles.tokenHovered,
+        isInteractive && hovered && { backgroundColor: "#F7F7F7" },
         isInteractive && pressed && styles.tokenPressed
       ]}
     >
-      <Text style={[styles.tokenLabel, disabled && styles.tokenLabelDisabled]}>{label}</Text>
+      <Text style={[styles.tokenLabel, { color: colors.text }, disabled && { color: "#A2A2A2" }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -132,8 +137,6 @@ const styles = StyleSheet.create({
     minHeight: 48,
     borderRadius: radius.md,
     borderWidth: 2,
-    borderColor: "#E2E2E2",
-    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: spacing.lg,
@@ -144,9 +147,6 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 1
   },
-  tokenHovered: {
-    backgroundColor: "#F7F7F7"
-  },
   tokenPressed: {
     transform: [{ translateY: 2 }],
     shadowOffset: { width: 0, height: 1 }
@@ -155,12 +155,8 @@ const styles = StyleSheet.create({
     opacity: 0.5
   },
   tokenLabel: {
-    color: "#4A4A4A",
     fontSize: typography.title,
     fontWeight: "500"
-  },
-  tokenLabelDisabled: {
-    color: "#A2A2A2"
   },
   placeholder: {
     minHeight: 48,

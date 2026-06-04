@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
-import { colors, radius, spacing } from "@pulse-ui/core";
+import { radius, spacing, usePulseTheme } from "@pulse-ui/core";
 import { useChoiceGroup } from "./ChoiceGroup";
 
 export interface ChoiceCardProps extends PropsWithChildren {
@@ -24,10 +24,19 @@ function isChoiceSelected(group: ReturnType<typeof useChoiceGroup>, value: strin
 }
 
 export function ChoiceCard({ value, selected, disabled, onPress, style, children }: ChoiceCardProps) {
+  const theme = usePulseTheme();
+  const { colors } = theme;
   const group = useChoiceGroup();
   const isDisabled = disabled ?? group?.disabled ?? false;
   const isSelected = selected ?? (group ? isChoiceSelected(group, value) : false);
   const isMultiple = group?.mode === "multiple";
+  const depthBase = theme.mode === "dark" ? colors.border.subtle : "#D7D7D7";
+  const depthBorder = theme.mode === "dark" ? colors.border.default : "#D0D0D0";
+  const faceBorder = theme.mode === "dark" ? colors.border.default : "#E1E1E1";
+  const hoverDepth = theme.mode === "dark" ? colors.border.default : "#DCE4EE";
+  const hoverDepthBorder = theme.mode === "dark" ? colors.border.strong : "#D3DDEA";
+  const hoverFaceBorder = theme.mode === "dark" ? colors.border.strong : "#D3DDEA";
+  const hoverFaceBackground = theme.mode === "dark" ? colors.background.subtle : "#FAFCFF";
 
   function handlePress() {
     if (isDisabled) {
@@ -68,15 +77,25 @@ export function ChoiceCard({ value, selected, disabled, onPress, style, children
           <View
             style={[
               styles.depth,
+              { backgroundColor: depthBase, borderColor: depthBorder },
               isSelected && styles.depthSelected,
-              hovered && !isSelected && styles.depthHovered
+              hovered &&
+                !isSelected && {
+                  backgroundColor: hoverDepth,
+                  borderColor: hoverDepthBorder
+                }
             ]}
           />
           <View
             style={[
               styles.card,
+              { backgroundColor: colors.background.surface, borderColor: faceBorder },
               isSelected && styles.cardSelected,
-              hovered && !isSelected && styles.cardHovered
+              hovered &&
+                !isSelected && {
+                  backgroundColor: hoverFaceBackground,
+                  borderColor: hoverFaceBorder
+                }
             ]}
           >
             <View style={styles.inner}>{children}</View>
@@ -101,16 +120,12 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     top: 4,
     borderRadius: radius.lg,
-    backgroundColor: "#D7D7D7",
-    borderWidth: 2,
-    borderColor: "#D0D0D0"
+    borderWidth: 2
   },
   card: {
     minHeight: 250,
     borderRadius: radius.lg,
     borderWidth: 2,
-    borderColor: "#E1E1E1",
-    backgroundColor: colors.surface,
     padding: spacing.lg
   },
   inner: {
@@ -123,14 +138,6 @@ const styles = StyleSheet.create({
   cardSelected: {
     borderColor: "#78D0FF",
     backgroundColor: "#DDF2FF"
-  },
-  depthHovered: {
-    backgroundColor: "#DCE4EE",
-    borderColor: "#D3DDEA"
-  },
-  cardHovered: {
-    borderColor: "#D3DDEA",
-    backgroundColor: "#FAFCFF"
   },
   cardDisabled: {
     opacity: 0.55

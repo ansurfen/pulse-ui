@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View, ViewStyle } from "react-
 import { BubblePopover, type BubblePopoverPlacement } from "./BubblePopover";
 import { Drawer, type DrawerPlacement } from "./Drawer";
 import { Overlay } from "./Overlay";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
 
 export interface SelectDropdownOption<TValue extends string = string> {
   value: TValue;
@@ -44,6 +44,7 @@ export function SelectDropdown<TValue extends string = string>({
   visible,
   onVisibleChange
 }: SelectDropdownProps<TValue>) {
+  const colors = usePulseLegacyColors();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = typeof visible === "boolean" ? visible : internalOpen;
   const setOpen = (next: boolean) => {
@@ -58,17 +59,18 @@ export function SelectDropdown<TValue extends string = string>({
   );
 
   const trigger = (
-    <Pressable onPress={() => setOpen(!open)} style={[styles.trigger, variant === "inline" && styles.triggerInline, style]}>
+    <Pressable onPress={() => setOpen(!open)} style={[styles.trigger, { borderColor: colors.border, backgroundColor: colors.surface }, variant === "inline" && styles.triggerInline, style]}>
       <Text
         style={[
           styles.triggerLabel,
+          { color: colors.text },
           variant === "inline" && styles.triggerLabelInline,
-          !selectedOption && styles.triggerPlaceholder
+          !selectedOption && { color: colors.textMuted }
         ]}
       >
         {selectedOption ? selectedOption.label : placeholder}
       </Text>
-      <Text style={[styles.triggerChevron, variant === "inline" && styles.triggerChevronInline]}>
+      <Text style={[styles.triggerChevron, { color: colors.textMuted }, variant === "inline" && styles.triggerChevronInline]}>
         {open ? "▴" : "▾"}
       </Text>
     </Pressable>
@@ -79,6 +81,7 @@ export function SelectDropdown<TValue extends string = string>({
       title={title}
       options={options}
       value={value}
+      colors={colors}
       renderValue={renderValue}
       onSelect={(next) => {
         onValueChange?.(next);
@@ -139,6 +142,7 @@ interface SelectDropdownMenuProps<TValue extends string = string> {
   title?: string;
   options: SelectDropdownOption<TValue>[];
   value?: TValue;
+  colors: ReturnType<typeof usePulseLegacyColors>;
   renderValue?: (option?: SelectDropdownOption<TValue>) => ReactNode;
   onSelect: (value: TValue) => void;
 }
@@ -147,6 +151,7 @@ function SelectDropdownMenu<TValue extends string = string>({
   title,
   options,
   value,
+  colors,
   renderValue,
   onSelect
 }: SelectDropdownMenuProps<TValue>) {
@@ -154,7 +159,7 @@ function SelectDropdownMenu<TValue extends string = string>({
     <>
       {title ? (
         <View style={styles.menuHeader}>
-          <Text style={styles.menuHeaderText}>{title}</Text>
+          <Text style={[styles.menuHeaderText, { color: colors.textMuted }]}>{title}</Text>
         </View>
       ) : null}
       <ScrollView style={styles.menuList} showsVerticalScrollIndicator={false}>
@@ -167,7 +172,7 @@ function SelectDropdownMenu<TValue extends string = string>({
               style={[
                 styles.optionRow,
                 active && styles.optionRowActive,
-                index < options.length - 1 && styles.optionBorder
+                index < options.length - 1 && [styles.optionBorder, { borderBottomColor: colors.border }]
               ]}
             >
               <View style={styles.optionMain}>
@@ -176,10 +181,10 @@ function SelectDropdownMenu<TValue extends string = string>({
                   {renderValue && active ? (
                     renderValue(option)
                   ) : (
-                    <Text style={[styles.optionLabel, active && styles.optionLabelActive]}>{option.label}</Text>
+                    <Text style={[styles.optionLabel, { color: active ? "#1C9EF2" : colors.text }]}>{option.label}</Text>
                   )}
                   {option.description ? (
-                    <Text style={styles.optionDescription}>{option.description}</Text>
+                    <Text style={[styles.optionDescription, { color: colors.textMuted }]}>{option.description}</Text>
                   ) : null}
                 </View>
               </View>
@@ -197,8 +202,6 @@ const styles = StyleSheet.create({
     minHeight: 48,
     borderRadius: radius.md,
     borderWidth: 2,
-    borderColor: "#D9D9D9",
-    backgroundColor: colors.surface,
     paddingHorizontal: spacing.lg,
     flexDirection: "row",
     alignItems: "center",
@@ -213,7 +216,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   triggerLabel: {
-    color: colors.text,
     fontSize: typography.bodyLg,
     fontWeight: "700"
   },
@@ -221,10 +223,9 @@ const styles = StyleSheet.create({
     color: "#1CB0F6"
   },
   triggerPlaceholder: {
-    color: colors.textMuted
+    
   },
   triggerChevron: {
-    color: colors.textMuted,
     fontSize: typography.bodyLg
   },
   triggerChevronInline: {
@@ -247,11 +248,9 @@ const styles = StyleSheet.create({
   menuHeader: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E7E7E7"
+    borderBottomWidth: 1
   },
   menuHeaderText: {
-    color: "#8C8C8C",
     fontSize: typography.bodyLg,
     fontWeight: "700"
   },
@@ -266,8 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#DDF1FF"
   },
   optionBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#ECECEC"
+    borderBottomWidth: 1
   },
   optionMain: {
     flexDirection: "row",
@@ -284,15 +282,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   optionLabel: {
-    color: "#4B4B4B",
     fontSize: typography.title,
     fontWeight: "700"
   },
-  optionLabelActive: {
-    color: "#1C9EF2"
-  },
   optionDescription: {
-    color: colors.textMuted,
     fontSize: typography.body
   }
 });

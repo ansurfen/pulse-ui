@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
-import { colors, spacing, typography } from "@pulse-ui/core";
+import { spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
 import { Drawer, type DrawerPlacement } from "../Drawer";
 import { Overlay } from "../Overlay";
 import { SettingsRow } from "./SettingsRow";
@@ -42,6 +42,7 @@ export function SettingsOverlayRow({
   overlayCardStyle,
   drawerPanelStyle
 }: SettingsOverlayRowProps) {
+  const colors = usePulseLegacyColors();
   const [internalVisible, setInternalVisible] = useState(defaultVisible);
   const isControlled = typeof visible === "boolean";
   const isVisible = isControlled ? visible : internalVisible;
@@ -79,9 +80,9 @@ export function SettingsOverlayRow({
         onPress={open}
         trailing={
           <View style={styles.trailing}>
-            {value ? <Text style={styles.value}>{value}</Text> : null}
-            {detail ? <Text style={styles.detail}>{detail}</Text> : null}
-            <Text style={styles.chevron}>›</Text>
+            {value ? <Text style={[styles.value, { color: colors.textMuted }]}>{value}</Text> : null}
+            {detail ? <Text style={[styles.detail, { color: colors.primary }]}>{detail}</Text> : null}
+            <Text style={[styles.chevron, { color: "#AFAFAF" }]}>›</Text>
           </View>
         }
       />
@@ -116,17 +117,14 @@ const styles = StyleSheet.create({
     gap: spacing.sm
   },
   value: {
-    color: colors.textMuted,
     fontSize: typography.bodyLg,
     fontWeight: "700"
   },
   detail: {
-    color: "#1CB0F6",
     fontSize: typography.bodyLg,
     fontWeight: "700"
   },
   chevron: {
-    color: "#AFAFAF",
     fontSize: 24,
     lineHeight: 24,
     fontWeight: "700"

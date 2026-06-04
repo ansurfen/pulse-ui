@@ -1,6 +1,7 @@
 import { Children, PropsWithChildren, ReactElement, cloneElement, isValidElement } from "react";
 import { StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
+import { useSettingsBorder } from "./settingsTokens";
 
 export interface SettingsGroupProps extends PropsWithChildren {
   title?: string;
@@ -14,6 +15,8 @@ type SettingsRowLikeProps = {
 };
 
 export function SettingsGroup({ title, style, titleStyle, panelStyle, children }: SettingsGroupProps) {
+  const colors = usePulseLegacyColors();
+  const settingsBorder = useSettingsBorder();
   const items = Children.toArray(children);
   const lastIndex = items.length - 1;
 
@@ -31,8 +34,19 @@ export function SettingsGroup({ title, style, titleStyle, panelStyle, children }
 
   return (
     <View style={[styles.root, style]}>
-      {title ? <Text style={[styles.title, titleStyle]}>{title}</Text> : null}
-      <View style={[styles.panel, panelStyle]}>{resolvedChildren}</View>
+      {title ? <Text style={[styles.title, { color: colors.textMuted }, titleStyle]}>{title}</Text> : null}
+      <View
+        style={[
+          styles.panel,
+          {
+            backgroundColor: colors.surface,
+            borderColor: settingsBorder.color
+          },
+          panelStyle
+        ]}
+      >
+        {resolvedChildren}
+      </View>
     </View>
   );
 }
@@ -43,16 +57,13 @@ const styles = StyleSheet.create({
     gap: spacing.sm
   },
   title: {
-    color: "#8C8C8C",
     fontSize: typography.bodyLg,
     fontWeight: "800"
   },
   panel: {
     width: "100%",
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    backgroundColor: colors.surface,
+    borderWidth: 2,
     overflow: "hidden"
   }
 });

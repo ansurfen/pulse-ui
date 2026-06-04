@@ -1,4 +1,5 @@
 import { StyleSheet, ViewStyle } from "react-native";
+import { usePulseTheme } from "@pulse-ui/core";
 import { TextField, type TextFieldProps } from "../TextField";
 import { SettingsRow } from "./SettingsRow";
 
@@ -20,15 +21,16 @@ export function SettingsInputRow({
   theme,
   ...textFieldProps
 }: SettingsInputRowProps) {
+  const pulseTheme = usePulseTheme();
   return (
     <SettingsRow label={label} showDivider={showDivider} disabled={disabled} style={rowStyle}>
       <TextField
         disabled={disabled}
         clearable={clearable}
         theme={{
-          backgroundColor: "#F7F7F7",
-          borderColor: "#E8E8E8",
-          focusedBorderColor: "#1CB0F6",
+          backgroundColor: pulseTheme.colors.input.background,
+          borderColor: pulseTheme.colors.input.border,
+          focusedBorderColor: pulseTheme.colors.brand.secondary,
           ...theme
         }}
         style={{ ...settingsInputStyles.field, ...fieldStyle }}

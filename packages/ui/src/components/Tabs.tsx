@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
-import { colors, spacing, typography } from "@pulse-ui/core";
+import { spacing, typography, usePulseTheme } from "@pulse-ui/core";
 
 export type TabItem<TValue extends string = string> = {
   value: TValue;
@@ -29,12 +29,19 @@ export function Tabs<TValue extends string = string>({
   defaultValue,
   onValueChange,
   style,
-  activeColor = "#1CB0F6",
-  inactiveColor = "#DADADA",
-  activeTextColor = "#1CB0F6",
-  inactiveTextColor = "#4B4B4B",
-  dividerColor = "#E5E5E5"
+  activeColor,
+  inactiveColor,
+  activeTextColor,
+  inactiveTextColor,
+  dividerColor
 }: TabsProps<TValue>) {
+  const theme = usePulseTheme();
+  const { colors } = theme;
+  const resolvedActiveColor = activeColor ?? colors.brand.secondary;
+  const resolvedInactiveColor = inactiveColor ?? colors.border.default;
+  const resolvedActiveTextColor = activeTextColor ?? colors.brand.secondary;
+  const resolvedInactiveTextColor = inactiveTextColor ?? colors.text.primary;
+  const resolvedDividerColor = dividerColor ?? colors.border.default;
   const [internalValue, setInternalValue] = useState<TValue | undefined>(defaultValue ?? items[0]?.value);
   const selectedValue = value ?? internalValue ?? items[0]?.value;
 
@@ -51,7 +58,7 @@ export function Tabs<TValue extends string = string>({
   };
 
   return (
-    <View style={[styles.wrapper, { borderBottomColor: dividerColor }, style]}>
+    <View style={[styles.wrapper, { borderBottomColor: resolvedDividerColor }, style]}>
       <View style={styles.row}>
         {items.map((item) => {
           const active = item.value === selectedValue;
@@ -74,8 +81,8 @@ export function Tabs<TValue extends string = string>({
                 <Text
                   style={[
                     styles.label,
-                    { color: active ? activeTextColor : inactiveTextColor },
-                    item.disabled && styles.disabledLabel
+                    { color: active ? resolvedActiveTextColor : resolvedInactiveTextColor },
+                    item.disabled && { color: colors.text.muted }
                   ]}
                 >
                   {item.label}
@@ -86,8 +93,8 @@ export function Tabs<TValue extends string = string>({
                 style={[
                   styles.indicator,
                   {
-                    backgroundColor: active ? activeColor : "transparent",
-                    borderTopColor: active ? activeColor : inactiveColor
+                    backgroundColor: active ? resolvedActiveColor : "transparent",
+                    borderTopColor: active ? resolvedActiveColor : resolvedInactiveColor
                   }
                 ]}
               />
@@ -138,9 +145,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: typography.title,
     fontWeight: "800"
-  },
-  disabledLabel: {
-    color: colors.textMuted
   },
   indicator: {
     width: "100%",

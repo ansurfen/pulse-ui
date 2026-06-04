@@ -9,7 +9,7 @@ import Animated, {
   withSequence,
   withTiming
 } from "react-native-reanimated";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
 
 export interface XPBarStage {
   at: number;
@@ -34,11 +34,13 @@ export function XPBar({
   label = "XP Progress",
   showValue = true,
   fillColor = "#58CC02",
-  trackColor = "#E5E5E5",
+  trackColor,
   height = 16,
   stages,
   animatedFeedback = true
 }: XPBarProps) {
+  const colors = usePulseLegacyColors();
+  const resolvedTrackColor = trackColor ?? colors.border;
   const progress = Math.max(0, Math.min(1, max === 0 ? 0 : value / max));
   const previousProgress = useRef(progress);
   const width = useSharedValue(0);
@@ -118,15 +120,18 @@ export function XPBar({
     <View style={styles.container}>
       {label || showValue ? (
         <View style={styles.header}>
-          {label ? <Text style={styles.label}>{label}</Text> : <View />}
+          {label ? <Text style={[styles.label, { color: colors.text }]}>{label}</Text> : <View />}
           {showValue ? (
-            <Text style={styles.value}>
+            <Text style={[styles.value, { color: colors.textMuted }]}>
               {value}/{max}
             </Text>
           ) : null}
         </View>
       ) : null}
-      <View onLayout={(event) => setTrackWidth(event.nativeEvent.layout.width)} style={[styles.track, { backgroundColor: trackColor, height }]}>
+      <View
+        onLayout={(event) => setTrackWidth(event.nativeEvent.layout.width)}
+        style={[styles.track, { backgroundColor: resolvedTrackColor, height }]}
+      >
         <Animated.View style={[styles.fill, fillStyle, { backgroundColor: resolvedFillColor }]}>
           <View style={styles.fillGloss} />
         </Animated.View>
@@ -160,12 +165,11 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   label: {
-    color: colors.text,
+    
     fontSize: typography.body,
     fontWeight: "700"
   },
   value: {
-    color: colors.textMuted,
     fontSize: typography.caption,
     fontWeight: "600"
   },

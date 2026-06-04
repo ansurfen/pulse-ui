@@ -1,5 +1,5 @@
 import Svg, { Circle } from "react-native-svg";
-import { colors } from "@pulse-ui/core";
+import { usePulseTheme } from "@pulse-ui/core";
 
 type ResetViewIconProps = {
   disabled?: boolean;
@@ -7,7 +7,8 @@ type ResetViewIconProps = {
 };
 
 export function ResetViewIcon({ disabled = false, size = 20 }: ResetViewIconProps) {
-  const color = disabled ? colors.textMuted : "#6A8394";
+  const theme = usePulseTheme();
+  const color = disabled ? theme.colors.text.muted : theme.colors.text.primary;
 
   return (
     <Svg width={size} height={size} viewBox="0 0 22 22" accessibilityRole="image">

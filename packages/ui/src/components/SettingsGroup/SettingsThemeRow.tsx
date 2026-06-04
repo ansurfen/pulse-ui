@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
 import { spacing, typography } from "@pulse-ui/core";
 import { Drawer, type DrawerPlacement } from "../Drawer";
 import { SettingsRow } from "./SettingsRow";
+import { useSettingsBorder } from "./settingsTokens";
 import { ThemeSwatches } from "./ThemeSwatches";
 
 export interface ThemeOption<TValue extends string = string> {
@@ -40,6 +41,7 @@ export function SettingsThemeRow<TValue extends string = string>({
   visible,
   onVisibleChange
 }: SettingsThemeRowProps<TValue>) {
+  const settingsBorder = useSettingsBorder();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = typeof visible === "boolean" ? visible : internalOpen;
   const setOpen = (next: boolean) => {
@@ -86,7 +88,7 @@ export function SettingsThemeRow<TValue extends string = string>({
         contentStyle={styles.drawerContent}
       >
         {drawerTitle ? (
-          <View style={styles.drawerHeader}>
+          <View style={[styles.drawerHeader, { borderBottomWidth: settingsBorder.width, borderBottomColor: settingsBorder.dividerColor }]}>
             <Text style={styles.drawerHeaderText}>{drawerTitle}</Text>
           </View>
         ) : null}
@@ -102,7 +104,7 @@ export function SettingsThemeRow<TValue extends string = string>({
               style={[
                 styles.optionRow,
                 active && styles.optionRowActive,
-                index < options.length - 1 && styles.optionBorder
+                index < options.length - 1 && { borderBottomWidth: settingsBorder.width, borderBottomColor: settingsBorder.dividerColor }
               ]}
             >
               <Text style={[styles.optionLabel, active && styles.optionLabelActive]}>{option.label}</Text>
@@ -132,9 +134,7 @@ const styles = StyleSheet.create({
   },
   drawerHeader: {
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E7E7E7"
+    paddingVertical: spacing.md
   },
   drawerHeaderText: {
     color: "#8C8C8C",
@@ -151,10 +151,6 @@ const styles = StyleSheet.create({
   },
   optionRowActive: {
     backgroundColor: "#DDF1FF"
-  },
-  optionBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#ECECEC"
   },
   optionLabel: {
     flex: 1,

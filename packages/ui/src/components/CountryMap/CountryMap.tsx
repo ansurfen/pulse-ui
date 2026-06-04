@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LayoutChangeEvent, PanResponder, Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
 import Svg, { G, Path, Rect } from "react-native-svg";
-import { colors, radius, shadows, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors, usePulseTheme } from "@pulse-ui/core";
 import { getMap } from "./maps/registry";
 import {
   createViewportForCenter,
@@ -53,6 +53,8 @@ export function CountryMap({
   onRegionPress,
   style
 }: CountryMapProps & { style?: ViewStyle }) {
+  const colors = usePulseLegacyColors();
+  const theme = usePulseTheme();
   const map = getMap(country);
   const bounds = getMapViewportBounds(map.viewBox, map.regions);
   const focusRegionIds =
@@ -166,6 +168,11 @@ export function CountryMap({
   const canZoomIn = viewport.zoom < maxZoom;
   const canReset = !isSameViewport(viewport, initialViewport);
   const containerHeight = typeof height === "number" ? height : 320;
+  const controlsBorderColor =
+    theme.mode === "dark" ? theme.colors.border.default : "rgba(233, 239, 245, 0.95)";
+  const zoomButtonFill =
+    theme.mode === "dark" ? theme.colors.background.surfaceAlt : countryMapPalette.zoomButtonFill;
+  const zoomIconColor = theme.mode === "dark" ? theme.colors.text.primary : countryMapPalette.text;
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width: nextWidth, height: nextHeight } = event.nativeEvent.layout;
@@ -271,18 +278,26 @@ export function CountryMap({
       </View>
 
       {showZoomControls ? (
-        <View style={styles.zoomControls} pointerEvents="box-none">
+        <View
+          style={[
+            styles.zoomControls,
+            theme.shadows.sm as ViewStyle,
+            { backgroundColor: colors.surface, borderColor: controlsBorderColor }
+          ]}
+          pointerEvents="box-none"
+        >
           <Pressable
             accessibilityLabel="Zoom out"
             disabled={!canZoomOut}
             onPress={handleZoomOut}
             style={({ pressed }) => [
               styles.zoomButton,
+              { backgroundColor: zoomButtonFill },
               !canZoomOut && styles.zoomButtonDisabled,
               pressed && canZoomOut && styles.zoomButtonPressed
             ]}
           >
-            <Text style={[styles.zoomIcon, !canZoomOut && styles.zoomIconDisabled]}>−</Text>
+            <Text style={[styles.zoomIcon, { color: zoomIconColor }, !canZoomOut && { color: colors.textMuted }]}>−</Text>
           </Pressable>
 
           <Pressable
@@ -291,6 +306,7 @@ export function CountryMap({
             onPress={handleReset}
             style={({ pressed }) => [
               styles.zoomButton,
+              { backgroundColor: zoomButtonFill },
               !canReset && styles.zoomButtonDisabled,
               pressed && canReset && styles.zoomButtonPressed
             ]}
@@ -304,11 +320,12 @@ export function CountryMap({
             onPress={handleZoomIn}
             style={({ pressed }) => [
               styles.zoomButton,
+              { backgroundColor: zoomButtonFill },
               !canZoomIn && styles.zoomButtonDisabled,
               pressed && canZoomIn && styles.zoomButtonPressed
             ]}
           >
-            <Text style={[styles.zoomIcon, !canZoomIn && styles.zoomIconDisabled]}>+</Text>
+            <Text style={[styles.zoomIcon, { color: zoomIconColor }, !canZoomIn && { color: colors.textMuted }]}>+</Text>
           </Pressable>
         </View>
       ) : null}
@@ -338,18 +355,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: radius.pill,
-    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "rgba(233, 239, 245, 0.95)",
-    ...shadows.sm
   },
   zoomButton: {
     width: 30,
     height: 30,
     borderRadius: radius.pill,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: countryMapPalette.zoomButtonFill
+    justifyContent: "center"
   },
   zoomButtonPressed: {
     opacity: 0.85
@@ -362,9 +375,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     lineHeight: 20
-  },
-  zoomIconDisabled: {
-    color: colors.textMuted
   }
 });
 

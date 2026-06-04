@@ -1,27 +1,27 @@
 export const colors = {
-  primary: "#5B7CFF",
-  primarySoft: "#DCE4FF",
-  secondary: "#1D2B53",
-  success: "#2CC58A",
+  primary: "#7DDB00",
+  primarySoft: "#F0FFD4",
+  secondary: "#1F3B63",
+  success: "#7DDB00",
   warning: "#FFB648",
   danger: "#FF5D73",
-  background: "#F4F7FB",
+  background: "#F7F7F2",
   surface: "#FFFFFF",
-  surfaceAlt: "#EEF3FF",
-  border: "#D8E2F2",
-  inputBackground: "#F7F7F7",
-  inputBorder: "#E8E8E8",
-  inputBorderFocused: "#84D8FF",
+  surfaceAlt: "#FBFFF3",
+  border: "#E8E8E1",
+  inputBackground: "#FFFFFF",
+  inputBorder: "#E8E8E1",
+  inputBorderFocused: "#22AFFF",
   inputPlaceholder: "#AFAFAF",
   inputText: "#4B4B4B",
-  inputCaret: "#1CB0F6",
+  inputCaret: "#22AFFF",
   inputClear: "#C4C4C4",
   inputSuffix: "#84D8FF",
-  text: "#182033",
-  textMuted: "#667089",
+  text: "#373737",
+  textMuted: "#8D8D8D",
   heart: "#FF5D73",
   coin: "#FFCA45",
-  xp: "#6EDE8A",
+  xp: "#7DDB00",
   streak: "#FF8B3D",
   shadow: "rgba(24, 32, 51, 0.14)"
 } as const;
@@ -77,4 +77,3 @@ export const tokens = {
 } as const;
 
 export type PulseTokens = typeof tokens;
-

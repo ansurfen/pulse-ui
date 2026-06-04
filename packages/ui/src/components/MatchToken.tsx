@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MotiView } from "moti";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
 
 export type MatchTokenStatus = "idle" | "selected" | "correct" | "wrong" | "disabled";
 
@@ -174,6 +174,7 @@ export function MatchToken({
 }
 
 function Burst() {
+  const colors = usePulseLegacyColors();
   return (
     <View pointerEvents="none" style={styles.burst}>
       {burstParticles.map((particle, index) => (
@@ -194,8 +195,8 @@ function Burst() {
           }}
           style={styles.particle}
         >
-          <View style={styles.sparkleVertical} />
-          <View style={styles.sparkleHorizontal} />
+          <View style={[styles.sparkleVertical, { backgroundColor: colors.xp }]} />
+          <View style={[styles.sparkleHorizontal, { backgroundColor: colors.xp }]} />
         </MotiView>
       ))}
     </View>
@@ -283,14 +284,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 6,
     height: 14,
-    borderRadius: radius.pill,
-    backgroundColor: "#8FE244"
+    borderRadius: radius.pill
   },
   sparkleHorizontal: {
     position: "absolute",
     width: 14,
     height: 6,
-    borderRadius: radius.pill,
-    backgroundColor: "#8FE244"
+    borderRadius: radius.pill
   }
 });

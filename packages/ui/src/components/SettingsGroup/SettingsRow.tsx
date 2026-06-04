@@ -1,6 +1,7 @@
 import { PropsWithChildren, ReactNode } from "react";
 import { Pressable, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
-import { colors, spacing, typography } from "@pulse-ui/core";
+import { spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
+import { useSettingsBorder } from "./settingsTokens";
 
 export interface SettingsRowProps extends PropsWithChildren {
   label: string;
@@ -22,9 +23,11 @@ export function SettingsRow({
   labelStyle,
   children
 }: SettingsRowProps) {
+  const colors = usePulseLegacyColors();
+  const settingsBorder = useSettingsBorder();
   const content = (
     <>
-      <Text style={[styles.label, labelStyle]} numberOfLines={2}>
+      <Text style={[styles.label, { color: colors.text }, labelStyle]} numberOfLines={2}>
         {label}
       </Text>
       <View style={styles.trailing}>{trailing ?? children}</View>
@@ -32,7 +35,14 @@ export function SettingsRow({
   );
 
   return (
-    <View style={[styles.rowShell, showDivider && styles.rowDivider, style]}>
+    <View
+      style={[
+        styles.rowShell,
+        { backgroundColor: colors.surface },
+        showDivider && { borderBottomWidth: settingsBorder.width, borderBottomColor: settingsBorder.dividerColor },
+        style
+      ]}
+    >
       {onPress ? (
         <Pressable
           disabled={disabled}
@@ -54,12 +64,7 @@ export function SettingsRow({
 
 const styles = StyleSheet.create({
   rowShell: {
-    width: "100%",
-    backgroundColor: colors.surface
-  },
-  rowDivider: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8E8E8"
+    width: "100%"
   },
   row: {
     minHeight: 56,
@@ -78,7 +83,6 @@ const styles = StyleSheet.create({
   },
   label: {
     flex: 1,
-    color: "#4B4B4B",
     fontSize: typography.bodyLg,
     fontWeight: "700"
   },

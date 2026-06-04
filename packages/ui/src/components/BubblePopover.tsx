@@ -1,6 +1,6 @@
 import { ReactNode, useMemo, useState } from "react";
 import { LayoutChangeEvent, Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import { colors, radius, spacing, shadows } from "@pulse-ui/core";
+import { radius, spacing, usePulseLegacyColors, usePulseTheme } from "@pulse-ui/core";
 
 export type BubblePopoverPlacement = "top" | "bottom" | "left" | "right";
 
@@ -37,6 +37,8 @@ export function BubblePopover({
   arrowSize = 12,
   offset = 10
 }: BubblePopoverProps) {
+  const colors = usePulseLegacyColors();
+  const theme = usePulseTheme();
   const [internalVisible, setInternalVisible] = useState(defaultVisible);
   const [triggerLayout, setTriggerLayout] = useState({ width: 0, height: 0 });
   const [bubbleLayout, setBubbleLayout] = useState({ width: 0, height: 0 });
@@ -88,13 +90,13 @@ export function BubblePopover({
           pointerEvents="box-none"
           style={[styles.bubbleLayer, bubblePositionStyle]}
         >
-          <View style={[styles.arrow, arrowPositionStyle, { width: arrowSize, height: arrowSize }]} />
+          <View style={[styles.arrow, arrowPositionStyle, { width: arrowSize, height: arrowSize, backgroundColor: colors.surface, borderColor: colors.border }]} />
           <Pressable
             onLayout={handleBubbleLayout}
             onPress={dismissOnContentPress ? () => setVisible(false) : undefined}
             onHoverIn={openOnHover ? () => setVisible(true) : undefined}
             onHoverOut={openOnHover ? () => setVisible(false) : undefined}
-            style={[styles.bubble, bubbleStyle]}
+            style={[styles.bubble, theme.shadows.md, { backgroundColor: colors.surface, borderColor: colors.border }, bubbleStyle]}
           >
             <View style={[styles.content, contentStyle]}>{children}</View>
           </Pressable>
@@ -196,10 +198,7 @@ const styles = StyleSheet.create({
   bubble: {
     minWidth: 110,
     borderRadius: radius.lg,
-    backgroundColor: colors.surface,
     borderWidth: 2,
-    borderColor: "#D9D9D9",
-    ...shadows.md
   },
   content: {
     overflow: "hidden",
@@ -207,10 +206,8 @@ const styles = StyleSheet.create({
   },
   arrow: {
     position: "absolute",
-    backgroundColor: colors.surface,
     borderLeftWidth: 2,
     borderTopWidth: 2,
-    borderColor: "#D9D9D9",
     zIndex: 1
   }
 });

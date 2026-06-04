@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, View, ViewStyle } from "react-native";
-import { colors, radius, spacing } from "@pulse-ui/core";
+import { radius, spacing, usePulseTheme } from "@pulse-ui/core";
 
 export interface OverlayProps {
   visible: boolean;
@@ -18,11 +18,12 @@ export function Overlay({
   children,
   onRequestClose,
   dismissOnBackdropPress = true,
-  backdropColor = "rgba(24, 32, 51, 0.28)",
+  backdropColor,
   contentStyle,
   cardStyle,
   centered = true
 }: OverlayProps) {
+  const theme = usePulseTheme();
   return (
     <Modal
       visible={visible}
@@ -31,7 +32,7 @@ export function Overlay({
       statusBarTranslucent
       onRequestClose={onRequestClose}
     >
-      <View style={[styles.root, { backgroundColor: backdropColor }]}>
+      <View style={[styles.root, { backgroundColor: backdropColor ?? theme.colors.overlay.scrim }]}>
         <Pressable
           style={StyleSheet.absoluteFill}
           onPress={dismissOnBackdropPress ? onRequestClose : undefined}
@@ -40,7 +41,7 @@ export function Overlay({
           pointerEvents="box-none"
           style={[styles.contentLayer, centered && styles.contentLayerCentered]}
         >
-          <View pointerEvents="auto" style={[styles.card, cardStyle, contentStyle]}>
+          <View pointerEvents="auto" style={[styles.card, { backgroundColor: theme.colors.background.surface }, cardStyle, contentStyle]}>
             {children}
           </View>
         </View>
@@ -65,7 +66,6 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 420,
     borderRadius: radius.lg,
-    backgroundColor: colors.surface,
     padding: spacing.xl
   }
 });

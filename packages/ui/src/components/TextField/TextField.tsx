@@ -10,7 +10,7 @@ import {
   View,
   ViewStyle
 } from "react-native";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseTheme } from "@pulse-ui/core";
 import { TextFieldClearIcon, TextFieldErrorIcon, TextFieldEyeIcon, TextFieldEyeOffIcon } from "./TextFieldIcons";
 import {
   TextFieldValidateFn,
@@ -66,37 +66,21 @@ export interface TextFieldProps extends Omit<TextInputProps, "style" | "placehol
   containerStyle?: ViewStyle;
 }
 
-const defaultTheme: Required<TextFieldTheme> = {
-  backgroundColor: colors.inputBackground,
-  borderColor: colors.inputBorder,
-  focusedBorderColor: colors.inputBorderFocused,
-  errorBorderColor: colors.danger,
-  textColor: colors.inputText,
-  placeholderColor: colors.inputPlaceholder,
-  selectionColor: colors.inputCaret,
-  errorTextColor: colors.danger,
-  errorIconColor: colors.danger,
-  errorIconGlyphColor: colors.surface,
-  clearButtonBackgroundColor: colors.inputClear,
-  clearButtonIconColor: colors.surface,
-  suffixIconColor: colors.inputSuffix
-};
-
-function resolveTheme(theme?: TextFieldTheme): Required<TextFieldTheme> {
+function resolveTheme(baseTheme: Required<TextFieldTheme>, theme?: TextFieldTheme): Required<TextFieldTheme> {
   return {
-    backgroundColor: theme?.backgroundColor ?? defaultTheme.backgroundColor,
-    borderColor: theme?.borderColor ?? defaultTheme.borderColor,
-    focusedBorderColor: theme?.focusedBorderColor ?? defaultTheme.focusedBorderColor,
-    errorBorderColor: theme?.errorBorderColor ?? defaultTheme.errorBorderColor,
-    textColor: theme?.textColor ?? defaultTheme.textColor,
-    placeholderColor: theme?.placeholderColor ?? defaultTheme.placeholderColor,
-    selectionColor: theme?.selectionColor ?? defaultTheme.selectionColor,
-    errorTextColor: theme?.errorTextColor ?? defaultTheme.errorTextColor,
-    errorIconColor: theme?.errorIconColor ?? defaultTheme.errorIconColor,
-    errorIconGlyphColor: theme?.errorIconGlyphColor ?? defaultTheme.errorIconGlyphColor,
-    clearButtonBackgroundColor: theme?.clearButtonBackgroundColor ?? defaultTheme.clearButtonBackgroundColor,
-    clearButtonIconColor: theme?.clearButtonIconColor ?? defaultTheme.clearButtonIconColor,
-    suffixIconColor: theme?.suffixIconColor ?? defaultTheme.suffixIconColor
+    backgroundColor: theme?.backgroundColor ?? baseTheme.backgroundColor,
+    borderColor: theme?.borderColor ?? baseTheme.borderColor,
+    focusedBorderColor: theme?.focusedBorderColor ?? baseTheme.focusedBorderColor,
+    errorBorderColor: theme?.errorBorderColor ?? baseTheme.errorBorderColor,
+    textColor: theme?.textColor ?? baseTheme.textColor,
+    placeholderColor: theme?.placeholderColor ?? baseTheme.placeholderColor,
+    selectionColor: theme?.selectionColor ?? baseTheme.selectionColor,
+    errorTextColor: theme?.errorTextColor ?? baseTheme.errorTextColor,
+    errorIconColor: theme?.errorIconColor ?? baseTheme.errorIconColor,
+    errorIconGlyphColor: theme?.errorIconGlyphColor ?? baseTheme.errorIconGlyphColor,
+    clearButtonBackgroundColor: theme?.clearButtonBackgroundColor ?? baseTheme.clearButtonBackgroundColor,
+    clearButtonIconColor: theme?.clearButtonIconColor ?? baseTheme.clearButtonIconColor,
+    suffixIconColor: theme?.suffixIconColor ?? baseTheme.suffixIconColor
   };
 }
 
@@ -129,7 +113,26 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>(function TextF
   },
   ref
 ) {
-  const resolvedTheme = useMemo(() => resolveTheme(theme), [theme]);
+  const pulseTheme = usePulseTheme();
+  const baseTheme = useMemo<Required<TextFieldTheme>>(
+    () => ({
+      backgroundColor: pulseTheme.colors.input.background,
+      borderColor: pulseTheme.colors.input.border,
+      focusedBorderColor: pulseTheme.colors.input.focusedBorder,
+      errorBorderColor: pulseTheme.colors.feedback.danger,
+      textColor: pulseTheme.colors.input.text,
+      placeholderColor: pulseTheme.colors.input.placeholder,
+      selectionColor: pulseTheme.colors.input.caret,
+      errorTextColor: pulseTheme.colors.feedback.danger,
+      errorIconColor: pulseTheme.colors.feedback.danger,
+      errorIconGlyphColor: pulseTheme.colors.text.inverse,
+      clearButtonBackgroundColor: pulseTheme.colors.input.clear,
+      clearButtonIconColor: pulseTheme.colors.text.inverse,
+      suffixIconColor: pulseTheme.colors.input.suffix
+    }),
+    [pulseTheme]
+  );
+  const resolvedTheme = useMemo(() => resolveTheme(baseTheme, theme), [baseTheme, theme]);
   const inputRef = useRef<TextInput>(null);
   const [focused, setFocused] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);

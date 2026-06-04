@@ -7,7 +7,7 @@ import Animated, {
   useSharedValue,
   withTiming
 } from "react-native-reanimated";
-import { colors, radius, spacing } from "@pulse-ui/core";
+import { radius, spacing, usePulseTheme } from "@pulse-ui/core";
 
 export type DrawerPlacement = "top" | "bottom";
 
@@ -34,6 +34,7 @@ export function Drawer({
   contentStyle,
   maxHeightRatio = 0.85
 }: DrawerProps) {
+  const theme = usePulseTheme();
   const { height: windowHeight } = useWindowDimensions();
   const [mounted, setMounted] = useState(visible);
   const [panelHeight, setPanelHeight] = useState(0);
@@ -98,7 +99,7 @@ export function Drawer({
       onRequestClose={onRequestClose}
     >
       <View style={styles.root}>
-        <Animated.View style={[styles.backdrop, { backgroundColor: backdropColor }, backdropAnimatedStyle]}>
+        <Animated.View style={[styles.backdrop, { backgroundColor: backdropColor ?? theme.colors.overlay.scrim }, backdropAnimatedStyle]}>
           <Pressable
             style={StyleSheet.absoluteFill}
             onPress={dismissOnBackdropPress ? onRequestClose : undefined}
@@ -117,6 +118,7 @@ export function Drawer({
             }}
             style={[
               styles.panel,
+              { backgroundColor: theme.colors.background.surface },
               placement === "bottom" ? styles.panelBottom : styles.panelTop,
               { maxHeight: maxPanelHeight },
               panelAnimatedStyle,
@@ -150,7 +152,6 @@ const styles = StyleSheet.create({
   },
   panel: {
     width: "100%",
-    backgroundColor: colors.surface,
     overflow: "hidden"
   },
   panelBottom: {

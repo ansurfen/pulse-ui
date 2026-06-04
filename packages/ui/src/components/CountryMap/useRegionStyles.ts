@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { colors } from "@pulse-ui/core";
+import { usePulseLegacyColors } from "@pulse-ui/core";
 import type { MapRegion, RegionData, RegionStyle } from "./types";
 
 function hexToRgb(input: string) {
@@ -44,8 +44,8 @@ export function useRegionStyles({
   mapRegions,
   activeRegions = [],
   regions = [],
-  baseColor = colors.surfaceAlt,
-  activeColor = colors.success
+  baseColor,
+  activeColor
 }: {
   mapRegions: readonly MapRegion[];
   activeRegions?: readonly string[];
@@ -53,20 +53,23 @@ export function useRegionStyles({
   baseColor?: string;
   activeColor?: string;
 }) {
+  const colors = usePulseLegacyColors();
+  const resolvedBaseColor = baseColor ?? colors.surfaceAlt;
+  const resolvedActiveColor = activeColor ?? colors.success;
   return useMemo(() => {
     const styles: Record<string, RegionStyle> = {};
 
     for (const region of mapRegions) {
       const data = resolveRegionData(region.id, activeRegions, regions);
-      let fill = baseColor;
+      let fill = resolvedBaseColor;
 
       if (data.active) {
         if (data.color) {
           fill = data.color;
         } else if (data.value !== undefined) {
-          fill = mixColor(baseColor, activeColor, Math.max(0, Math.min(100, data.value)) / 100);
+          fill = mixColor(resolvedBaseColor, resolvedActiveColor, Math.max(0, Math.min(100, data.value)) / 100);
         } else {
-          fill = activeColor;
+          fill = resolvedActiveColor;
         }
       }
 
@@ -77,5 +80,5 @@ export function useRegionStyles({
     }
 
     return styles;
-  }, [activeColor, activeRegions, baseColor, mapRegions, regions]);
+  }, [activeRegions, mapRegions, regions, resolvedActiveColor, resolvedBaseColor]);
 }
