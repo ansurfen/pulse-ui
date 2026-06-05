@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MotiView } from "moti";
-import { radius, spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors, usePulseTheme } from "@pulse-ui/core";
 
 export type MatchTokenStatus = "idle" | "selected" | "correct" | "wrong" | "disabled";
 
-export interface MatchTokenProps {
-  label: string;
+export interface MatchTokenProps extends PropsWithChildren {
+  label?: string;
   value: string;
   index?: number | string;
   status?: MatchTokenStatus;
@@ -106,11 +106,35 @@ export function MatchToken({
   index,
   status = "idle",
   onPress,
-  style
+  style,
+  children
 }: MatchTokenProps) {
+  const theme = usePulseTheme();
   const [burstKey, setBurstKey] = useState(0);
   const isDisabled = status === "disabled";
-  const palette = statusPalette[status];
+  const basePalette = statusPalette[status];
+  const palette =
+    status === "idle"
+      ? {
+          ...basePalette,
+          background: theme.colors.background.surface,
+          border: theme.colors.border.default,
+          text: theme.colors.text.primary,
+          badgeBackground: theme.colors.background.surface,
+          badgeBorder: theme.colors.border.default,
+          badgeText: theme.colors.text.muted
+        }
+      : status === "disabled"
+        ? {
+            ...basePalette,
+            background: theme.colors.background.subtle,
+            border: theme.colors.border.default,
+            text: theme.colors.text.muted,
+            badgeBackground: theme.colors.background.surfaceAlt,
+            badgeBorder: theme.colors.border.default,
+            badgeText: theme.colors.text.muted
+          }
+        : basePalette;
   const bottomColor = mixColor(palette.background, "#000000", 0.08);
   const glossColor = mixColor(palette.background, "#FFFFFF", 0.12);
 
@@ -162,9 +186,13 @@ export function MatchToken({
                 <Text style={[styles.badgeText, { color: palette.badgeText }]}>{index}</Text>
               </View>
             ) : null}
-            <Text style={[styles.label, { color: palette.text }]} numberOfLines={1}>
-              {label}
-            </Text>
+            {children ? (
+              <View style={styles.content}>{children}</View>
+            ) : (
+              <Text style={[styles.label, { color: palette.text }]} numberOfLines={1}>
+                {label}
+              </Text>
+            )}
             {status === "correct" ? <Burst key={burstKey} /> : null}
           </LinearGradient>
         </MotiView>
@@ -227,7 +255,7 @@ const styles = StyleSheet.create({
     paddingRight: spacing.xl,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "visible"
+    overflow: "hidden"
   },
   gloss: {
     position: "absolute",
@@ -264,6 +292,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: typography.bodyLg,
     fontWeight: "800"
+  },
+  content: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center"
   },
   burst: {
     ...StyleSheet.absoluteFillObject,

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
-import { radius, spacing, typography, usePulseLegacyColors } from "@pulse-ui/core";
+import { radius, spacing, typography, usePulseLegacyColors, usePulseTheme } from "@pulse-ui/core";
 
 export interface WordBuilderItem {
   id: string;
@@ -25,6 +25,7 @@ export function WordBuilder({
   style
 }: WordBuilderProps) {
   const colors = usePulseLegacyColors();
+  const theme = usePulseTheme();
   const resolvedAnswerRows = answerRows && answerRows.length > 0 ? answerRows : [selectedIds ?? []];
   const resolvedSelectedIds = resolvedAnswerRows.flat();
 
@@ -47,19 +48,31 @@ export function WordBuilder({
                     label={item.label}
                     disabled={item.disabled}
                     colors={colors}
+                    mode={theme.mode}
                     onPress={onSelectedItemPress ? () => onSelectedItemPress(item) : undefined}
                   />
                 );
               })}
             </View>
-            <View style={styles.divider} />
+            <View
+              style={[
+                styles.divider,
+                { backgroundColor: theme.mode === "dark" ? colors.border : "#E6E6E6" }
+              ]}
+            />
           </View>
         ))}
       </View>
       <View style={styles.optionsRow}>
         {items.map((item) =>
           resolvedSelectedIds.includes(item.id) ? (
-            <View key={item.id} style={styles.placeholder}>
+            <View
+              key={item.id}
+              style={[
+                styles.placeholder,
+                { backgroundColor: "#E5E5E5" }
+              ]}
+            >
               <Text style={styles.placeholderLabel}>{item.label}</Text>
             </View>
           ) : (
@@ -68,6 +81,7 @@ export function WordBuilder({
               label={item.label}
               disabled={item.disabled}
               colors={colors}
+              mode={theme.mode}
               onPress={onOptionItemPress ? () => onOptionItemPress(item) : undefined}
             />
           )
@@ -81,25 +95,42 @@ interface WordTokenProps {
   label: string;
   disabled?: boolean;
   colors: ReturnType<typeof usePulseLegacyColors>;
+  mode: "light" | "dark";
   onPress?: () => void;
 }
 
-function WordToken({ label, disabled, colors, onPress }: WordTokenProps) {
+function WordToken({ label, disabled, colors, mode, onPress }: WordTokenProps) {
   const isInteractive = Boolean(onPress) && !disabled;
+  const hoverBackground = mode === "dark" ? colors.surfaceAlt : "#F7F7F7";
+  const disabledText = mode === "dark" ? colors.textMuted : "#A2A2A2";
+  const depthColor = mode === "dark" ? colors.border : "#D8D8D8";
 
   return (
     <Pressable
       disabled={!isInteractive}
       onPress={onPress}
       style={({ pressed, hovered }) => [
-        styles.token,
-        { borderColor: colors.border, backgroundColor: colors.surface },
+        styles.tokenShell,
         disabled && styles.tokenDisabled,
-        isInteractive && hovered && { backgroundColor: "#F7F7F7" },
         isInteractive && pressed && styles.tokenPressed
       ]}
     >
-      <Text style={[styles.tokenLabel, { color: colors.text }, disabled && { color: "#A2A2A2" }]}>{label}</Text>
+      {({ hovered }) => (
+        <>
+          <View style={[styles.tokenDepth, { backgroundColor: depthColor, borderColor: colors.border }]} />
+          <View
+            style={[
+              styles.tokenFace,
+              { borderColor: colors.border, backgroundColor: colors.surface },
+              isInteractive && hovered && { backgroundColor: hoverBackground }
+            ]}
+          >
+            <Text style={[styles.tokenLabel, { color: colors.text }, disabled && { color: disabledText }]}>
+              {label}
+            </Text>
+          </View>
+        </>
+      )}
     </Pressable>
   );
 }
@@ -132,7 +163,19 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     paddingTop: spacing.xl
   },
-  token: {
+  tokenShell: {
+    minWidth: 68,
+    minHeight: 52,
+    borderRadius: radius.md,
+    position: "relative"
+  },
+  tokenDepth: {
+    ...StyleSheet.absoluteFillObject,
+    top: 3,
+    borderRadius: radius.md,
+    borderWidth: 2
+  },
+  tokenFace: {
     minWidth: 68,
     minHeight: 48,
     borderRadius: radius.md,
@@ -140,16 +183,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    shadowColor: "rgba(0, 0, 0, 0.08)",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 1
+    paddingVertical: spacing.md
   },
   tokenPressed: {
-    transform: [{ translateY: 2 }],
-    shadowOffset: { width: 0, height: 1 }
+    transform: [{ translateY: 2 }]
   },
   tokenDisabled: {
     opacity: 0.5
@@ -160,8 +197,7 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     minHeight: 48,
-    borderRadius: radius.md,
-    backgroundColor: "#E5E5E5"
+    borderRadius: radius.md
   },
   placeholderLabel: {
     fontSize: typography.title,

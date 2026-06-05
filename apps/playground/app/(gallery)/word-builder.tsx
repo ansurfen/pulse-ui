@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { WordBuilder, type WordBuilderItem } from "@pulse-ui/ui";
-import { colors, radius, spacing, typography } from "@pulse-ui/core";
+import { colors, radius, spacing, typography, usePulseTheme } from "@pulse-ui/core";
 import { ScreenTemplate } from "../../src/components/ScreenTemplate";
 
 const allItems: WordBuilderItem[] = [
@@ -27,6 +27,7 @@ const advancedItems: WordBuilderItem[] = [
 ];
 
 export default function WordBuilderScreen() {
+  const theme = usePulseTheme();
   const [selectedIds, setSelectedIds] = useState<string[]>(["and", "coffee"]);
   const [advancedAnswerRows, setAdvancedAnswerRows] = useState<string[][]>([
     ["i", "would", "like"],
@@ -38,8 +39,13 @@ export default function WordBuilderScreen() {
   return (
     <ScreenTemplate title="Word Builder" description="A Duolingo-style word bank layout where selected words leave placeholders in their original bank slots and return to the same position when removed.">
       <View style={styles.wrapper}>
-        <View style={styles.exampleBlock}>
-          <Text style={styles.exampleTitle}>Basic</Text>
+        <View
+          style={[
+            styles.exampleBlock,
+            { backgroundColor: theme.mode === "dark" ? theme.colors.background.surfaceAlt : "#F8FAFD" }
+          ]}
+        >
+          <Text style={[styles.exampleTitle, { color: theme.colors.text.primary }]}>Basic</Text>
           <WordBuilder
             items={allItems}
             selectedIds={selectedIds}
@@ -51,8 +57,13 @@ export default function WordBuilderScreen() {
             }}
           />
         </View>
-        <View style={styles.exampleBlock}>
-          <Text style={styles.exampleTitle}>Long Sentence</Text>
+        <View
+          style={[
+            styles.exampleBlock,
+            { backgroundColor: theme.mode === "dark" ? theme.colors.background.surfaceAlt : "#F8FAFD" }
+          ]}
+        >
+          <Text style={[styles.exampleTitle, { color: theme.colors.text.primary }]}>Long Sentence</Text>
           <WordBuilder
             items={advancedItems}
             answerRows={advancedAnswerRows}
@@ -77,7 +88,9 @@ export default function WordBuilderScreen() {
             }}
           />
         </View>
-        <Text style={styles.hint}>Tap a chip to move it between the answer row and its original slot in the word bank.</Text>
+        <Text style={[styles.hint, { color: theme.colors.text.muted }]}>
+          Tap a chip to move it between the answer row and its original slot in the word bank.
+        </Text>
       </View>
     </ScreenTemplate>
   );

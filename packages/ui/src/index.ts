@@ -17,6 +17,7 @@ export * from "./components/Overlay";
 export * from "./components/Heart";
 export * from "./components/Icons";
 export * from "./components/MatchToken";
+export * from "./components/MatchBoard";
 export * from "./components/SelectDropdown";
 export * from "./components/SectionHeading";
 export * from "./components/SettingsGroup";
